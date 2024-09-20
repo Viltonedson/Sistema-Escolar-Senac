@@ -11,7 +11,7 @@ const app = express()
 app.use(express.json())
 
 //Models
-const User = require('../models/user')
+const User = require('./models/user')
 
 //Abrir Rota - Public Route
 app.get('/', (req, res) => {
