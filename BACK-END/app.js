@@ -172,7 +172,7 @@ const dbUser = process.env.DB_USER
 const dbPassword = process.env.DB_PASS
 
 mongoose
-.connect(`mongodb+srv://${dbUser}:${dbPassword}@sistemaescolar.xkjs7.mongodb.net/?retryWrites=true&w=majority&appName=SistemaEscolar`)
+.connect(`mongodb+srv://${dbUser}:${dbPassword}@medepapai.npmbv.mongodb.net/?retryWrites=true&w=majority&appName=MEDEPAPAI`)
 .then(() => {
         app.listen(3000)
         console.log('Conectado ao Banco com Sucesso!')})
