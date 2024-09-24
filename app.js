@@ -44,7 +44,6 @@ function checkToken(req, res, next){
     try {
         
         const secret = process.env.SECRET
-
         jwt.verify(token, secret)
         next()
 
@@ -56,7 +55,7 @@ function checkToken(req, res, next){
 // Registro de Usuario
 app.post('/auth/register', async(require, res) => {
 
-    const {name, password, confirmpassword, email, numerotelefone, datanascimento, cpf} = require.body
+    const {name, password, confirmpassword, email, numerotelefone, datanascimento, cpf, tipodeUsuario} = require.body
 
     //Validacao
     if(!name){
@@ -87,7 +86,16 @@ app.post('/auth/register', async(require, res) => {
         return res.status(422).json({msg : 'O cpf é obrigatório!'})
     }
 
-    
+    if (!tipodeUsuario) {
+        return res.status(422).json({ msg: 'O tipo de usuário é obrigatório!' })
+    }
+
+     // Validação para garantir que o tipo de usuário é válido
+     const tiposValidos = ['Aluno', 'Professor', 'Coordenador']
+     if (!tiposValidos.includes(tipodeUsuario)) {
+         return res.status(422).json({ msg: 'Tipo de usuário inválido! Os valores permitidos são: aluno, professor, coordenador.' })
+     }
+
     //query check if user exist
     const userExist = await User.findOne({email: email})
     if (userExist){
@@ -106,6 +114,7 @@ app.post('/auth/register', async(require, res) => {
         numerotelefone,
         datanascimento,
         cpf,
+        tipodeUsuario
     })
 
     try{
@@ -159,7 +168,7 @@ try {
     },
     secret,
 )
-    res.status(200).json({msg : "Autenticação realizada com sucesso", token})
+    res.status(200).json({msg : "Autenticação realzada com sucesso", token})
 
 } catch (err) {
     console.log(error)
@@ -171,7 +180,7 @@ const dbUser = process.env.DB_USER
 const dbPassword = process.env.DB_PASS
 
 mongoose
-.connect(`mongodb+srv://${dbUser}:${dbPassword}@medepapai.npmbv.mongodb.net/?retryWrites=true&w=majority&appName=MEDEPAPAI`)
+.connect(`mongodb+srv://${dbUser}:${dbPassword}@sistemaescolar.xkjs7.mongodb.net/?retryWrites=true&w=majority&appName=SistemaEscolar`)
 .then(() => {
         app.listen(3000)
         console.log('Conectado ao Banco com Sucesso!')})
