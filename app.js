@@ -10,8 +10,16 @@ const app = express()
 //Config JSON resposta
 app.use(express.json())
 
-//Models
+//Models, Rotas
 const User = require('./models/user')
+const Classes = require('./models/Classes')
+const Disciplinas = require('./models/Disciplinas')
+const Alunos_Turmas = require('./models/Alunos_Turms')
+const Comunicados = require('./models/Comunicados')
+const Professores_Disciplinas = require('./models/Professores_Disciplinas')
+const Turmas_Disciplinas = require('./models/Turmas_Disciplinas')
+
+
 
 //Abrir Rota - Public Route
 app.get('/', (req, res) => {
@@ -117,6 +125,7 @@ app.post('/auth/register', async(require, res) => {
         tipodeUsuario
     })
 
+    // Usuario registrando no bd
     try{
         await user.save()
 
@@ -175,6 +184,31 @@ try {
 }
 })
 
+
+//Cadastrar Alunos
+
+router.post('/', async (req, res) => {
+    try {
+        const { aluno_id, turma_id, turno, email } = req.body;
+
+        const novaMatricula = new AlunosTurmas({
+            aluno_id,
+            turma_id,
+            turno,
+            email
+        });
+
+        await novaMatricula.save();
+
+        res.status(201).json({ message: 'Aluno Cadastrado com sucesso' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erro ao cadastar aluno' });
+    }
+});
+
+module.exports = router;
+
 //Credenciais
 const dbUser = process.env.DB_USER
 const dbPassword = process.env.DB_PASS
@@ -185,3 +219,10 @@ mongoose
         app.listen(3000)
         console.log('Conectado ao Banco com Sucesso!')})
 .catch((err) => console.log((err)))
+
+
+
+
+
+
+
