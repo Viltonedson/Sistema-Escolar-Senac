@@ -1,27 +1,46 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const registerForm = document.getElementById("register-form");
+    const messageDiv = document.getElementById("message");
 
-var btnSignin = document.querySelector("#signin");
-var btnSignup = document.querySelector("#signup");
+    registerForm.addEventListener("submit", async (e) => {
+        e.preventDefault(); // Evita o comportamento padrão de envio do formulário
 
-var body = document.querySelector("body");
+        // Coleta os valores do formulário
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const confirmpassword = document.getElementById("confirmpassword").value;
+        const numerotelefone = document.getElementById("numerotelefone").value;
+        const datanascimento = document.getElementById("datanascimento").value;
+        const cpf = document.getElementById("cpf").value;
+        const tipodeUsuario = document.getElementById("tipodeUsuario").value;
 
 
-btnSignin.addEventListener("click", function () {
-   body.className = "sign-in-js"; 
-});
-
-btnSignup.addEventListener("click", function () {
-    body.className = "sign-up-js";
-})
-
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js')
-            .then(registration => {
-                console.log('Service Worker registrado com sucesso:', registration);
-            })
-            .catch(error => {
-                console.log('Falha ao registrar o Service Worker:', error);
+        try {
+            // Enviar a requisição para o backend
+            const response = await fetch("http://localhost:3000/auth/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(userData)
             });
-    });
-}
 
+            const data = await response.json();
+
+            if (response.ok) {
+                messageDiv.textContent = data.msg;
+                messageDiv.style.color = "green";
+                // Opcional: Redirecionar para outra página
+                // window.location.href = "login.html";
+            } else {
+                messageDiv.textContent = data.msg || "Erro ao cadastrar!";
+                messageDiv.style.color = "red";
+            }
+        } catch (error) {
+            console.error("Erro ao cadastrar:", error);
+            messageDiv.textContent = "Erro ao conectar ao servidor!";
+            messageDiv.style.color = "red";
+        }
+    });
+});

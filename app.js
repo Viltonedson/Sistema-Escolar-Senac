@@ -4,6 +4,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const cors = require('cors'); 
 
 const app = express()
 
@@ -185,3 +186,5 @@ mongoose
         app.listen(3000)
         console.log('Conectado ao Banco com Sucesso!')})
 .catch((err) => console.log((err)))
+
+app.use(cors());
