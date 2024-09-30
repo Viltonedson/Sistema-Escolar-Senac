@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Financeiro </title>
+    <link rel="stylesheet" href="financeiro.css">
+</head>
+<body>
+    <div class="container">
+        <h1> Financeiro </h1>
+
+        
+        <h2>Adicionar Taxa</h2>
+        <form id="taxa-form">
+            <input type="text" id="descricao-tax" placeholder="Descrição" required>
+            <input type="number" id="valor-tax" placeholder="Valor" required>
+            <input type="text" id="aluno-id" placeholder="ID do Aluno" required>
+            <button type="submit">Adicionar Taxa</button>
+            <p id="erro-taxa" style="color: red;"></p> 
+        </form>
+
+        <h2>Taxas a Pagar</h2>
+        <ul id="taxa-list"></ul>
+
+        <h2>Gerar Boleto</h2>
+        <input type="text" id="boleto-aluno-id" placeholder="ID do Aluno para gerar boleto" required>
+        <button id="gerar-boleto">Gerar Boleto</button>
+        <p id="mensagem-boleto" style="color: green;"></p>
+    </div>
+
+    <script src="financeiro.js"></script>
+</body>
+</html>

@@ -17,6 +17,5 @@ const alunosTurmasSchema = new mongoose.Schema({
 
 });
 
-const AlunosTurmas = mongoose.model('AlunosTurmas', alunosTurmasSchema);
 
-module.exports = AlunosTurmas;
+module.exports = AlunosTurmas

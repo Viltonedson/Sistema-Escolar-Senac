@@ -7,4 +7,4 @@ const Classes = mongoose.model('Classes',{
     semestres: Number,
 })
 
-module.exports = User
+module.exports = Classes

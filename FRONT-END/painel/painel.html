@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Lateral com Conteúdo e Links Externos</title>
+    <link rel="stylesheet" href="painel.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <img src="../img/mediotec_logo.png" alt="Logo Mediotec">
+            <ul>
+                <li><a href="../cad_aluno/cad_aluno.html" data-section="aluno">Cadastrar Aluno</a></li>
+                <li><a href="../cad_prof/cad_prof.html" data-section="professor">Cadastrar Professor</a></li>
+                <li><a href="../academico/academico.html" data-section="turmas">Cadastrar Turmas</a></li>
+                <li><a href="../calendario/calendario.html" data-section="calendario">Calendário</a></li>
+                <li><a href="../financeiro/financeiro.html" id="financeiro-link">Financeiro</a></li>
+                <li><a href="../mensagem/mensagem.html" id="mensagem-link">Mensagens</a></li>
+                <li><a href="../presença/presenca.html" id="presenca-link">Presenças</a></li>
+                <li><a href="../usuarios/usuarios.html" id="usuario-link">Criar Usuários Novos</a></li>
+            </ul>
+            <button id="logout" href="../login/index.html">Sair</button>
+        </aside>
+        
+        <main class="main-content">
+            <div id="content-area">Selecione uma opção no menu para visualizar o conteúdo.</div>
+        </main>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registrado com sucesso:', registration);
+                    })
+                    .catch(error => {
+                        console.error('Falha ao registrar o Service Worker:', error);
+                    });
+            });
+        }
+    </script>
+    <script src="painel.js"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    background-color: #FFF;
+    border-radius: 10px;
+    padding: 30px;
+    max-width: 600px;
+    margin: auto;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #4267B0;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+input, select, button {
+    padding: 12px;
+    margin: 15px 0;
+    display: block;
+    width: calc(100% - 20px);
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+input, select {
+    background-color: #FFF;
+    border: 2px solid #DF2F80;
+    color: #333;
+}
+
+input:focus, select:focus {
+    border-color: #4267B0;
+    outline: none;
+}
+
+button {
+    background-color: #DF2F80;
+    color: white;
+    cursor: pointer;
+    border: none;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #4267B0;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 20px;
+    }
+
+    input, select, button {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 24px;
+    }
+
+    input, select, button {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    ul li {
+        padding: 8px;
+    }
+}

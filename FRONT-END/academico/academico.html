@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento Acadêmico</title>
+    <link rel="stylesheet" href="academico.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gerenciamento Acadêmico</h1>
+
+       
+        <h2>Gerenciar Turmas</h2>
+        <form id="turma-form">
+            <input type="text" id="turma-nome" placeholder="Nome da turma" required>
+            <button type="submit">Adicionar Turma</button>
+        </form>
+        <ul id="turma-list"></ul>
+
+       
+        <h2>Gerenciar Disciplinas</h2>
+        <form id="disciplina-form">
+            <input type="text" id="disciplina-nome" placeholder="Nome da disciplina" required>
+            <select id="turma-select" required>
+                <option value="" disabled selected>Selecione uma turma</option>
+            </select>
+            <button type="submit">Adicionar Disciplina</button>
+        </form>
+        <ul id="disciplina-list"></ul>
+
+       
+        <h2>Atribuir Notas</h2>
+        <form id="conceito-form">
+            <input type="text" id="aluno-nome" placeholder="Nome do aluno" required>
+            <select id="disciplina-select" required>
+                <option value="" disabled selected>Selecione uma disciplina</option>
+            </select>
+            <input type="number" id="nota" placeholder="Nota" min="0" max="10" required>
+            <button type="submit">Atribuir Nota</button>
+        </form>
+        <ul id="conceito-list"></ul>
+    </div>
+
+    <script src="academico.js"></script>
+</body>
+</html>

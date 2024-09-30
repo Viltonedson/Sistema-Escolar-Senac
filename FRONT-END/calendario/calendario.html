@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário Escolar</title>
+    <link rel="stylesheet" href="calendario.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Calendário Escolar</h1>
+        <form id="eventForm">
+            <label for="eventDate">Data:</label>
+            <input type="date" id="eventDate" required>
+
+            <label for="eventType">Tipo de Evento:</label>
+            <select id="eventType" required>
+                <option value="">Selecione</option>
+                <option value="Comemoração">Comemoração</option>
+                <option value="Prova">Prova</option>
+                <option value="Reunião">Reunião</option>
+                <option value="Outro">Outro</option>
+            </select>
+
+            <label for="eventDescription">Descrição:</label>
+            <input type="text" id="eventDescription" placeholder="Descrição do evento" required>
+
+            <button type="submit">Adicionar Evento</button>
+        </form>
+
+        <h2>Eventos Adicionados</h2>
+        <ul id="eventList"></ul>
+    </div>
+
+    <script src="calendario.js"></script>
+</body>
+</html>
