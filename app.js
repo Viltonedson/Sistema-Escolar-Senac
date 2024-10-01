@@ -165,6 +165,11 @@ const checkPassword = await bcrypt.compare(password, user.password)
         return res.status(422).json({ msg : 'Senha Inválida'})
     }
 
+    if (user.tipodeUsuario !== 'Coordenador') {
+        return res.status(403).json({ msg: 'Acesso restrito! Apenas coordenadores podem fazer login no sistema.' });
+    }
+    
+
 try {
     const secret = process.env.SECRET
     const token = jwt.sign(
@@ -173,10 +178,22 @@ try {
     },
     secret,
 )
-    res.status(200).json({msg : "Autenticação realzada com sucesso", token})
+    res.status(200).json({
+        msg: "Autenticação realizada com sucesso",
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                tipodeUsuario: user.tipodeUsuario
+            }
+        })
 
 } catch (err) {
-    console.log(error)
+    console.log(err);
+    res.status(500).json({
+        msg: 'Ocorreu um erro no servidor, tente novamente mais tarde.',
+    });
 }
 })
 
