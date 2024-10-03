@@ -1,9 +1,27 @@
+// Selecionar o botão e o formulário
+const showFormButton = document.getElementById('showFormButton');
+const registerUserForm = document.getElementById('registerUserForm');
+
+// Adicionar evento de clique no botão
+showFormButton.addEventListener('click', () => {
+    // Verificar se o formulário está visível ou escondido
+    if (registerUserForm.style.display === 'none') {
+        // Mostrar o formulário
+        registerUserForm.style.display = 'block';
+        showFormButton.textContent = 'Fechar Formulário'; // Alterar o texto do botão
+    } else {
+        // Esconder o formulário
+        registerUserForm.style.display = 'none';
+        showFormButton.textContent = 'Cadastrar Novo Usuário'; // Alterar o texto do botão
+    }
+});
+//=====================================================================================
+
 const users = [];
 let editingIndex = null; 
 document.getElementById('registerUserForm').addEventListener('submit', async function(event) {
     event.preventDefault(); 
 
-    
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -26,6 +44,23 @@ document.getElementById('registerUserForm').addEventListener('submit', async fun
     };
     
     try {
+        if (editingIndex !== null) {
+            // Atualizar o usuário no back-end via PUT
+            const response = await fetch(`http://localhost:3000/users/${editingIndex}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            });
+
+            if (response.ok) {
+                alert('Usuário atualizado com sucesso.');
+                editingIndex = null;
+            } else {
+                alert('Erro ao atualizar o usuário.');
+            }
+        } else {
         // Fazendo a requisição POST para o back-end
         const response = await fetch('http://localhost:3000/auth/register', {
             method: 'POST',
@@ -35,78 +70,126 @@ document.getElementById('registerUserForm').addEventListener('submit', async fun
             body: JSON.stringify(userData)  // Convertendo os dados do usuário para JSON
         });
 
-        const result = await response.json();  // Parse da resposta como JSON
+          // Parse da resposta como JSON
 
         if (response.ok) {
-            alert(result.msg);  // Exibe mensagem de sucesso
+            const result = await response.json();
+            alert(result.msg || 'Usuário cadastrado com sucesso.');
+            
         } else {
-            alert(result.msg);  // Exibe mensagem de erro
+            alert(result.msg || 'Erro ao cadastrar usuário.');
         }
-
-    } catch (error) {
-        console.error('Erro ao cadastrar usuário:', error);
-        alert('Erro ao tentar cadastrar o usuário. Tente novamente.');
+     }
+        await fetchUsers();
+    }  catch (error) {
+        console.error('Erro ao atualizar usuário:', error);
+        alert('Erro ao tentar atualizar o usuário. Tente novamente.');
     }
 });
 
-
-    if (editingIndex !== null) {
+async function fetchUsers() {
+    try {
+        const response = await fetch('http://localhost:3000/users', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token') // Assumindo que você armazena o token no localStorage após o login
+            }
+        });
         
-        users[editingIndex] = { name, email, password, numerotelefone, datanascimento, cpf, tipodeUsuario };
-        editingIndex = null; 
-    } else {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         
-        const user = { name, email, password, numerotelefone, datanascimento, cpf, tipodeUsuario };
-        users.push(user);
+        const users = await response.json();
+        populateUsersTable(users);
+    } catch (error) {
+        console.error('Erro ao buscar usuários:', error);
+        alert('Erro ao buscar usuários. Por favor, verifique se você está autenticado e tente novamente.');
     }
+}
 
-    
-    updateUsersTable();
-
-function updateUsersTable() {
+function populateUsersTable(users) {
     const tbody = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
-    tbody.innerHTML = ''; 
+    tbody.innerHTML = '';
+
+    if (users.length === 0) {
+        const row = tbody.insertRow();
+        const cell = row.insertCell(0);
+        cell.colSpan = 6;
+        cell.innerText = 'Nenhum usuário cadastrado.';
+        return;
+    }
 
     users.forEach((user, index) => {
         const row = tbody.insertRow();
-        row.insertCell(0).innerText = user.name;
-        row.insertCell(1).innerText = user.email;
-        row.insertCell(2).innerText = user.password;
-        row.insertCell(3).innerText = user.numerotelefone;
-        row.insertCell(4).innerText = user.datanascimento;
-        row.insertCell(5).innerText = user.cpf;
-        row.insertCell(6).innerText = user.tipodeUsuario;
+        row.insertCell(0).innerText = user.name || 'Nome não informado';
+        row.insertCell(1).innerText = user.email || 'E-mail não informado';
+        row.insertCell(2).innerText = user.numerotelefone || 'Telefone não informado';
+        row.insertCell(3).innerText = user.cpf || 'CPF não informado';
+        row.insertCell(4).innerText = user.datanascimento || 'Data Não Informada';
+        row.insertCell(5).innerText = user.tipodeUsuario || 'Função não informada';
 
-        
-        const editCell = row.insertCell(7);
+        const actionCell = row.insertCell(6);
+
         const editButton = document.createElement('button');
         editButton.innerText = 'Editar';
         editButton.onclick = function() {
-            editUser(index); 
+            editUser(user);
         };
-        editCell.appendChild(editButton);
+        actionCell.appendChild(editButton);
 
-       
-        const deleteCell = row.insertCell(8);
         const deleteButton = document.createElement('button');
         deleteButton.innerText = 'Excluir';
         deleteButton.onclick = function() {
-            users.splice(index, 1); 
-            updateUsersTable(); 
+            deleteUser(user._id);
         };
-        deleteCell.appendChild(deleteButton);
+        actionCell.appendChild(deleteButton);
     });
 }
 
-function editUser(index) {
-    const user = users[index];
-    document.getElementById('name').value = user.username;
+async function deleteUser(userId) {
+    try {
+        const response = await fetch(`http://localhost:3000/users${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            alert('Usuário excluído com sucesso.');
+            fetchUsers()
+        } else {
+            alert('Erro ao excluir o usuário.');
+        }
+    } catch (error) {
+        console.error('Erro ao excluir usuário:', error);
+        alert('Erro ao tentar excluir o usuário. Tente novamente.');
+    }
+}
+
+function editUser(user) {
+    document.getElementById('name').value = user.name;
     document.getElementById('email').value = user.email;
     document.getElementById('password').value = user.password;
-    document.getElementById('numerotelelfone').value = user.numerotelefone;
+    document.getElementById('confirmpassword').value = user.password;
+    document.getElementById('numerotelefone').value = user.numerotelefone;
     document.getElementById('datanascimento').value = user.datanascimento;
     document.getElementById('cpf').value = user.cpf;
     document.getElementById('tipodeUsuario').value = user.tipodeUsuario;
+    const editButton = document.createElement('button');
+    editingIndex = user._id;
+    document.getElementById('registerUserForm').style.display = 'block';
+    
+    editButton.onclick = function() {
+        editUser(user);  // Passando o objeto do usuário completo
+    };
+}
 
-    editingIndex = index; 
+document.addEventListener('DOMContentLoaded', async function() {
+    await fetchUsers();
+});
+
+function clearForm() {
+    document.getElementById('registerUserForm').reset();
+    editingIndex = null;
 }

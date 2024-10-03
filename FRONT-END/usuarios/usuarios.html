@@ -12,7 +12,10 @@
    
     <section id="coordinatorSection">
         <h2>Cadastro de Usuários</h2>
-        <form id="registerUserForm">
+
+        <button id="showFormButton">Cadastrar Novo Usuário</button>
+
+        <form id="registerUserForm" style="display:none">
             <label for="name">Nome de Usuário:</label>
             <input type="text" id="name" name="name" required><br><br>
             
@@ -41,7 +44,7 @@
                 <option value="Coordenador">Coordenador</option>
             </select><br><br>
             
-            <button type="submit">Cadastrar Usuário</button>
+            <button type="submit">Cadastrar</button>
         </form>
 
         
@@ -53,8 +56,8 @@
                     <th>E-mail</th>
                     <th>Telefone</th>
                     <th>CPF</th>
+                    <th>Data de Nascimento</th>
                     <th>Função</th>
-                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>

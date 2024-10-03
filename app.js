@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const cors = require('cors'); 
+const router = express.Router();
 
 const app = express()
 
@@ -16,7 +17,6 @@ app.use(cors());
 const User = require('./models/user')
 
 
-
 //Abrir Rota - Public Route
 app.get('/', (req, res) => {
     res.status(200).json({msg : 'EAE MEU PIVETE BEM VINDO A MINHA APi!'})
@@ -24,17 +24,23 @@ app.get('/', (req, res) => {
 
 //Private Route
 app.get('/user/:id', checkToken, async (req, res) => {
-    const id = req.params.id
-
-    //check if user exist
-    const user = await User.findById(id, '-password')
-
-    if(!user){
-     return res.status(404).json({msg : 'Usuário não encontrado'})
+    try {
+        const users = await User.find({}, '-password');
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao buscar usuários.' });
     }
-
-    res.status(200).json({user})
 })
+
+app.get('/users', async (req, res) => {
+    try {
+        const users = await User.find({}, '-password'); // Excluindo o campo de senha
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao buscar usuários.' });
+    }
+});
+
 
 function checkToken(req, res, next){
 
@@ -139,9 +145,61 @@ app.post('/auth/register', async(require, res) => {
 
 })
 
+// ========Rota para listar todos os usuários
+router.get('/user', async (req, res) => {
+    try {
+        const users = await User.find();  // Busca todos os usuários no banco de dados
+        res.json(users);  // Retorna os usuários como JSON
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao buscar usuários.' });
+    }
+});
+
+module.exports = router;
+
+router.put('/user/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name, email, password, numerotelefone, datanascimento, cpf, tipodeUsuario } = req.body;
+
+    try {
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            { name, email, password, numerotelefone, datanascimento, cpf, tipodeUsuario },
+            { new: true } // Retorna o usuário atualizado
+        );
+        
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'Usuário não encontrado.' });
+        }
+
+        res.json(updatedUser);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao atualizar o usuário.' });
+    }
+});
+
+//Rota para aceitar a requisição do DELETE do front
+router.delete('/users/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const deletedUser = await User.findByIdAndDelete(id);
+
+        if (!deletedUser) {
+            return res.status(404).json({ message: 'Usuário não encontrado.' });
+        }
+
+        res.json({ message: 'Usuário excluído com sucesso.' });
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao excluir o usuário.' });
+    }
+});
+
+//=======================
 //Login User
    app.post('/auth/login', async (req, res) => {
     const {email, password} = req.body
+    
 
 //Validacao
     if (!email) {
@@ -198,6 +256,8 @@ try {
 })
 
 
+
+
 //Credenciais
 const dbUser = process.env.DB_USER
 const dbPassword = process.env.DB_PASS
@@ -213,3 +273,4 @@ mongoose
 app.use(cors({
     origin: '*',  // Permitir todas as origens
 }));
+
