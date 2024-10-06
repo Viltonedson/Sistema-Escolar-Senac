@@ -63,10 +63,11 @@ function checkToken(req, res, next){
 }
 
 // Registro de Usuario
-app.post('/auth/register', async(require, res) => {
+app.post('/auth/register', async (req, res) => {
 
     const {name, password, confirmpassword, email, numerotelefone, datanascimento, cpf, tipodeUsuario} = require.body
 
+    
     //Validacao
     if(!name){
         return res.status(422).json({msg : 'O nome é obrigatório!'})
@@ -146,7 +147,7 @@ app.post('/auth/register', async(require, res) => {
 })
 
 // ========Rota para listar todos os usuários
-router.get('/user', async (req, res) => {
+app.get('/user', async (req, res) => {
     try {
         const users = await User.find();  // Busca todos os usuários no banco de dados
         res.json(users);  // Retorna os usuários como JSON
@@ -157,41 +158,52 @@ router.get('/user', async (req, res) => {
 
 module.exports = router;
 
-router.put('/user/:id', async (req, res) => {
+app.put('/user/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name, email, password, numerotelefone, datanascimento, cpf, tipodeUsuario } = req.body;
+    
+    try {
     const { id } = req.params;
     const { name, email, password, numerotelefone, datanascimento, cpf, tipodeUsuario } = req.body;
 
-    try {
-        const updatedUser = await User.findByIdAndUpdate(
-            id,
-            { name, email, password, numerotelefone, datanascimento, cpf, tipodeUsuario },
-            { new: true } // Retorna o usuário atualizado
-        );
-        
-        if (!updatedUser) {
-            return res.status(404).json({ message: 'Usuário não encontrado.' });
-        }
+    // Verifica se o usuário existe
+     let user = await User.findById(id);
+     if (!user) {
+        return res.status(404).json({ msg: 'Usuário não encontrado.' });
+    }
 
-        res.json(updatedUser);
+     // Atualiza os campos necessários
+    user.name = name || user.name;
+    user.email = email || user.email;
+    user.password = password ? await bcrypt.hash(password, 10) : user.password;
+    user.numerotelefone = numerotelefone || user.numerotelefone;
+    user.datanascimento = datanascimento || user.datanascimento;
+    user.cpf = cpf || user.cpf;
+    user.tipodeUsuario = tipodeUsuario || user.tipodeUsuario;
+
+    await user.save();
+
+    res.json({ msg: 'Usuário atualizado com sucesso.' });
     } catch (error) {
-        res.status(500).json({ message: 'Erro ao atualizar o usuário.' });
+    res.status(500).json({ msg: 'Erro ao atualizar usuário.' });
     }
 });
 
 //Rota para aceitar a requisição do DELETE do front
-router.delete('/users/:id', async (req, res) => {
-    const { id } = req.params;
-
+app.delete('/users/:id', async (req, res) => {
     try {
-        const deletedUser = await User.findByIdAndDelete(id);
+        const { id } = req.params;
 
-        if (!deletedUser) {
-            return res.status(404).json({ message: 'Usuário não encontrado.' });
+        // Verifica se o usuário existe e exclui
+        const user = await User.findByIdAndDelete(id);
+
+        if (!user) {
+            return res.status(404).json({ msg: 'Usuário não encontrado.' });
         }
 
-        res.json({ message: 'Usuário excluído com sucesso.' });
+        res.json({ msg: 'Usuário excluído com sucesso.' });
     } catch (error) {
-        res.status(500).json({ message: 'Erro ao excluir o usuário.' });
+        res.status(500).json({ msg: 'Erro ao excluir usuário.' });
     }
 });
 
@@ -254,9 +266,6 @@ try {
     });
 }
 })
-
-
-
 
 //Credenciais
 const dbUser = process.env.DB_USER

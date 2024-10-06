@@ -18,7 +18,7 @@ showFormButton.addEventListener('click', () => {
 //=====================================================================================
 
 const users = [];
-let editingIndex = null; 
+let editingUserId = null; 
 document.getElementById('registerUserForm').addEventListener('submit', async function(event) {
     event.preventDefault(); 
 
@@ -44,9 +44,10 @@ document.getElementById('registerUserForm').addEventListener('submit', async fun
     };
     
     try {
-        if (editingIndex !== null) {
+        if (editingUserId) {
+            
             // Atualizar o usuário no back-end via PUT
-            const response = await fetch(`http://localhost:3000/users/${editingIndex}`, {
+            const response = await fetch(`http://localhost:3000/user/${editingUserId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -56,11 +57,14 @@ document.getElementById('registerUserForm').addEventListener('submit', async fun
 
             if (response.ok) {
                 alert('Usuário atualizado com sucesso.');
-                editingIndex = null;
+                editingUserId = null;
+                clearForm();
+                fetchUsers();
             } else {
                 alert('Erro ao atualizar o usuário.');
             }
         } else {
+
         // Fazendo a requisição POST para o back-end
         const response = await fetch('http://localhost:3000/auth/register', {
             method: 'POST',
@@ -75,23 +79,24 @@ document.getElementById('registerUserForm').addEventListener('submit', async fun
         if (response.ok) {
             const result = await response.json();
             alert(result.msg || 'Usuário cadastrado com sucesso.');
-            
+            clearForm();
+            fetchUsers();
         } else {
             alert(result.msg || 'Erro ao cadastrar usuário.');
         }
      }
-        await fetchUsers();
     }  catch (error) {
         console.error('Erro ao atualizar usuário:', error);
         alert('Erro ao tentar atualizar o usuário. Tente novamente.');
     }
 });
 
+//=====
 async function fetchUsers() {
     try {
         const response = await fetch('http://localhost:3000/users', {
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token') // Assumindo que você armazena o token no localStorage após o login
+                'Authorization': 'Bearer ' + localStorage.getItem('token') //  armazena o token no localStorage após o login
             }
         });
         
@@ -148,7 +153,7 @@ function populateUsersTable(users) {
 
 async function deleteUser(userId) {
     try {
-        const response = await fetch(`http://localhost:3000/users${userId}`, {
+        const response = await fetch(`http://localhost:3000/users/${userId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -167,23 +172,21 @@ async function deleteUser(userId) {
     }
 }
 
-function editUser(user) {
+async function editUser(user) {
     document.getElementById('name').value = user.name;
     document.getElementById('email').value = user.email;
     document.getElementById('password').value = user.password;
     document.getElementById('confirmpassword').value = user.password;
     document.getElementById('numerotelefone').value = user.numerotelefone;
-    document.getElementById('datanascimento').value = user.datanascimento;
+    const formattedDate = new Date(user.datanascimento).toISOString().split('T')[0];
+    document.getElementById('datanascimento').value = formattedDate;
     document.getElementById('cpf').value = user.cpf;
     document.getElementById('tipodeUsuario').value = user.tipodeUsuario;
-    const editButton = document.createElement('button');
-    editingIndex = user._id;
-    document.getElementById('registerUserForm').style.display = 'block';
     
-    editButton.onclick = function() {
-        editUser(user);  // Passando o objeto do usuário completo
+    editingUserId = user._id;
+    document.getElementById('registerUserForm').style.display = 'block';
     };
-}
+
 
 document.addEventListener('DOMContentLoaded', async function() {
     await fetchUsers();
@@ -191,5 +194,5 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 function clearForm() {
     document.getElementById('registerUserForm').reset();
-    editingIndex = null;
+    editingUserId = null;
 }
