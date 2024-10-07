@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Lateral com Conteúdo e Links Externos</title>
+    <link rel="stylesheet" href="painel.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <img src="../img/mediotec_logo.png" alt="Logo Mediotec">
+            <ul>
+                <li><a href="../usuarios/usuarios.html" id="usuario-link">Cadastrar Usúario</a></li>
+                <li><a href="../academico/academico.html" data-section="turmas">Gerenciar Turmas</a></li>
+                <li><a href="../mensagem/mensagem.html" id="mensagem-link">Mensagens</a></li>
+            </ul>
+            <button id="logout" href="../login/index.html">Sair</button>
+        </aside>
+        
+        <main class="main-content">
+            <div id="content-area">Selecione uma opção no menu para visualizar o conteúdo.</div>
+        </main>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('../service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registrado com sucesso:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('Falha ao registrar o Service Worker:', error);
+                    });
+            });
+        }
+    </script>
+    <script src="painel.js"></script>
+</body>
+</html>

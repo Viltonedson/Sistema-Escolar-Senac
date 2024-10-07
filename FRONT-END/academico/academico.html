@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento Acadêmico</title>
+    <link rel="stylesheet" href="academico.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gerenciamento Acadêmico</h1>
+    
+        <h2>Gerenciar Turmas</h2>
+        <button id="criarTurmaButton">Criar Turma</button>
+        <button id="visualizarTurmasButton">Visualizar Turmas</button>
+        <ul id="turma-list"></ul>
+    
+        <h2>Gerenciar Disciplinas</h2>
+        <button id="criarDisciplinaButton">Adicionar Disciplina</button>
+        <button id="visualizarDisciplinasButton">Visualizar Disciplinas</button>
+        <ul id="disciplina-list"></ul>
+    </div>
+
+    <!-- Modal de criação de turma -->
+    <div id="turmaModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeTurmaModal">&times;</span>
+            <h2>Criar Turma</h2>
+            <form id="criarTurmaForm">
+                <label for="nomeTurma">Nome da Turma:</label>
+                <input type="text" id="nomeTurma" required>
+                <label for="anoTurma">Ano:</label>
+                <input type="text" id="anoTurma" required>
+                <label for="semestresTurma">Semestres:</label>
+                <input type="number" id="semestresTurma" required>
+                <label for="turnoTurma">Turno:</label>
+                <select id="turnoTurma" required>
+                    <option value="Manhã">Manhã</option>
+                    <option value="Tarde">Tarde</option>
+                    <option value="Noite">Noite</option>
+                </select>
+                <button type="submit">Criar Turma</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de criação de disciplina -->
+    <div id="disciplinaModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeDisciplinaModal">&times;</span>
+            <h2>Adicionar Disciplina</h2>
+            <form id="criarDisciplinaForm">
+                <label for="nomeDisciplina">Nome da Disciplina:</label>
+                <input type="text" id="nomeDisciplina" required>
+                <label for="descricaoDisciplina">Descrição:</label>
+                <textarea id="descricaoDisciplina" required></textarea>
+                <button type="submit">Adicionar Disciplina</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="academico.js"></script>
+</body>
+</html>

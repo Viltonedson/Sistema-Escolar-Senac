@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Comunicações</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="mensagem.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gerenciamento de Comunicações</h1>
+
+        
+        <h2>Nova Comunicação</h2>
+        <form id="comunicacao-form">
+            <input type="text" id="titulo" placeholder="Título da comunicação" required>
+            <textarea id="descricao" placeholder="Descrição da comunicação" required></textarea>
+            <input type="date" id="data" required>
+            <select id="destinatario" required>
+                <option value="" disabled selected>Selecione o destinatário</option>
+                <option value="aluno">Aluno</option>
+                <option value="professor">Professor</option>
+                <option value="turma">Turma</option>
+                <option value="todos">Todos</option>
+            </select>
+            <button type="submit">Enviar Comunicação</button>
+        </form>
+
+        <ul id="comunicacao-list"></ul>
+    </div>
+
+    <script src="mensagem.js"></script>
+</body>
+</html>
