@@ -15,7 +15,8 @@ app.use(cors());
 
 //Models, Rotas
 const User = require('./models/user')
-
+const Turmas = require('./models/Turmas')
+const Disciplinas = require('./models/Disciplinas')
 
 //Abrir Rota - Public Route
 app.get('/', (req, res) => {
@@ -61,6 +62,8 @@ function checkToken(req, res, next){
         res.status(400).json({msg:'Token Inválido'})
     }
 }
+//================================================================================================================//
+//================================================================================================================//
 
 // Registro de Usuario
 app.post('/auth/register', async (req, res) => {
@@ -266,7 +269,56 @@ try {
     });
 }
 })
+//================================================================================================================//
+//================================================================================================================//
 
+// Criar turma
+app.post('/turmas', async (req, res) => {
+    const { nome, ano, semestres, turno } = req.body;
+    try {
+        const turma = new Turmas({ nome, ano, semestres, turno });
+        await turma.save();
+        res.status(201).json({ message: 'Turma criada com sucesso!', turma });
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao criar turma', error });
+    }
+});
+
+// Visualizar todas as turmas
+app.get('/turmas', async (req, res) => {
+    try {
+        const turmas = await Turmas.find();
+        res.status(200).json(turmas);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao buscar turmas', error });
+    }
+});
+
+// Criar disciplina
+app.post('/disciplinas', async (req, res) => {
+    const { nome, descricao } = req.body;
+    try {
+        const disciplina = new Disciplinas({ nome, descricao });
+        await disciplina.save();
+        res.status(201).json({ message: 'Disciplina criada com sucesso!', disciplina });
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao criar disciplina', error });
+    }
+});
+
+// Visualizar todas as disciplinas
+app.get('/disciplinas', async (req, res) => {
+    try {
+        const disciplinas = await Disciplinas.find();
+        res.status(200).json(disciplinas);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao buscar disciplinas', error });
+    }
+});
+
+
+//================================================================================================================//
+//================================================================================================================//
 //Credenciais
 const dbUser = process.env.DB_USER
 const dbPassword = process.env.DB_PASS
