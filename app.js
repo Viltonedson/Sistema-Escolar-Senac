@@ -17,6 +17,7 @@ app.use(cors());
 const User = require('./models/user')
 const Turmas = require('./models/Turmas')
 const Disciplinas = require('./models/Disciplinas')
+const Comunicados = require('./models/Comunicado')
 
 //Abrir Rota - Public Route
 app.get('/', (req, res) => {
@@ -316,7 +317,35 @@ app.get('/disciplinas', async (req, res) => {
     }
 });
 
+//================================================================================================================//
+//================================================================================================================//
+app.get('/comunicados', async (req, res) => {
+    try {
+        const comunicados = await Comunicados.find().populate('autor_id destinatarios');
+        res.status(200).json(comunicados);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao buscar comunicados', error });
+    }
+})
 
+app.post('/comunicados', checkToken, async (req, res) => {
+    const { titulo, conteudo, destinatarios } = req.body;
+    const autor_id = req.user.id;
+
+    const novoComunicado = new Comunicados({
+        titulo,
+        conteudo,
+        autor_id,
+        destinatarios
+    });
+
+    try {
+        await novoComunicado.save();
+        res.status(201).json({ message: 'Comunicado criado com sucesso!', novoComunicado });
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao criar comunicado', error });
+    }
+});
 //================================================================================================================//
 //================================================================================================================//
 //Credenciais

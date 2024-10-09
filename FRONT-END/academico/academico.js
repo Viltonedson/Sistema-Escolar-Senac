@@ -43,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 alert('Turma criada com sucesso!');
                 turmaModal.style.display = 'none';
-                fetchTurmas();
             } else {
                 alert('Erro ao criar turma');
             }
@@ -96,18 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Funções para buscar e popular turmas e disciplinas
-    async function fetchTurmas() {
-        const response = await fetch('http://localhost:3000/turmas');
-        const turmas = await response.json();
-        const turmaList = document.getElementById('turma-list');
-        turmaList.innerHTML = ''; // Limpar a lista antes de popular
-
-        turmas.forEach(turma => {
-            const li = document.createElement('li');
-            li.textContent = `${turma.nome} - ${turma.ano} - ${turma.semestres} semestres - Turno: ${turma.turno}`;
-            turmaList.appendChild(li);
-        });
-    }
+  
 
     async function fetchDisciplinas() {
         const response = await fetch('http://localhost:3000/disciplinas');
@@ -123,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Chamar as funções para carregar turmas e disciplinas ao carregar a página
-    document.getElementById('visualizarTurmasButton').addEventListener('click', fetchTurmas);
     document.getElementById('visualizarDisciplinasButton').addEventListener('click', fetchDisciplinas);
 });
 

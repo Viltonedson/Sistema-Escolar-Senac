@@ -1,8 +1,6 @@
 const comunicacaoForm = document.getElementById('comunicacao-form');
 const comunicacaoList = document.getElementById('comunicacao-list');
-
 let comunicacoes = [];
-
 
 function renderizarComunicacoes() {
     comunicacaoList.innerHTML = '';
@@ -19,7 +17,6 @@ function renderizarComunicacoes() {
         comunicacaoList.appendChild(li);
     });
 }
-
 
 function excluirComunicacao(index) {
     comunicacoes.splice(index, 1);
@@ -46,3 +43,17 @@ comunicacaoForm.addEventListener('submit', (e) => {
 
 
 renderizarComunicacoes();
+
+async function buscarComunicados() {
+    try {
+        const response = await fetch('http://localhost:3000/comunicados')
+        if (!response.ok) {
+            throw new Error('Erro ao buscar comunicados');
+        }
+        comunicacoes = await response.json();
+        renderizarComunicacoes();
+    } catch (error) {
+        console.error(error);
+    }
+}
+

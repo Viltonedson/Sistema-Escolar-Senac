@@ -15,7 +15,7 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-h1, h2 {
+h1, h2, a {
     text-align: center;
     color: #DF2F80;
 }
@@ -34,7 +34,7 @@ input, select, button {
     font-size: 16px;
 }
 
-input:focus, select:focus {
+input:focus, select:focus, a:focus {
     border-color: #DF2F80;
     outline: none;
     box-shadow: 0 0 5px rgba(223, 47, 128, 0.3);
@@ -46,6 +46,11 @@ button {
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s ease;
+}
+
+a {
+    text-decoration: none;
+    color: white;
 }
 
 button:hover {
