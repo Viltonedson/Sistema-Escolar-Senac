@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const alunosTurmasSchema = new mongoose.Schema({
+const AlunosTurmasSchema = new mongoose.Schema({
     aluno_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -8,11 +8,14 @@ const alunosTurmasSchema = new mongoose.Schema({
     },
     turma_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Turmas',
+        ref: 'Turmas', 
         required: true
-    },
-
+    }
+}, {
+    timestamps: true 
 });
 
 
-module.exports = AlunosTurmas
+const AlunosTurmas = mongoose.model('AlunosTurmas', AlunosTurmasSchema);
+
+module.exports = AlunosTurmas;

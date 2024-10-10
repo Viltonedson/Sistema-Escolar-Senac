@@ -18,7 +18,10 @@ const User = require('./models/user')
 const Turmas = require('./models/Turmas')
 const Disciplinas = require('./models/Disciplinas')
 const Comunicados = require('./models/Comunicado')
-const ProfessorDisciplina = require('./models/ProfessorDiscipinas');
+const ProfessorDisciplinas = require('./models/ProfessorDisciplinas');
+const TurmasDisciplinas = require('./models/TurmasDisciplinas');
+const AlunosTurmas = require('./models/AlunosTurmas');
+const Conceito = require('./models/Conceito');
 
 //Abrir Rota - Public Route
 app.get('/', (req, res) => {
@@ -319,14 +322,14 @@ app.get('/Disciplinas', async (req, res) => {
 });
 
 // Rota para alocar professores a uma disciplina
-router.post('/ProfessorDisciplinas', async (req, res) => {
+app.post('/ProfessorDisciplinas', async (req, res) => {
     try {
         const { disciplinaId, professores } = req.body;
         if (!disciplinaId || !Array.isArray(professores) || professores.length === 0) {
             return res.status(400).json({ message: 'Disciplina ID e professores são obrigatórios.' });
         }
 
-        // Criar um novo documento para cada professor alocado à disciplina
+        
         const alocacoes = professores.map(professorId => ({
             professor_id: professorId,
             disciplina_id: disciplinaId,
@@ -353,13 +356,13 @@ app.get('/professores', async (req, res) => {
 // Rota para buscar usuários do tipo Professor
 app.get('/users', async (req, res) => {
     try {
-        const { tipodeUsuario } = req.query; // Pega o tipo de usuário da query
+        const { tipodeUsuario } = req.query;
         let query = {};
         if (tipodeUsuario) {
-            query.tipodeUsuario = tipodeUsuario; // Filtra pelo tipo de usuário
+            query.tipodeUsuario = tipodeUsuario; 
         }
-        const users = await User.find(query); // Busca usuários no banco
-        res.json(users); // Retorna a lista de usuários
+        const users = await User.find(query);
+        res.json(users); 
     } catch (error) {
         console.error('Erro ao buscar usuários:', error);
         res.status(500).send('Erro ao buscar usuários');
@@ -367,6 +370,76 @@ app.get('/users', async (req, res) => {
 });
 
 
+router.get('/turmas/:turma_id/disciplinas', async (req, res) => {
+    try {
+        const turmasDisciplinas = await TurmasDisciplinas.find({ turma_id: req.params.turmaId }).populate('disciplina_id');
+        const result = [];
+
+        for (const turmaDisciplina of turmasDisciplinas) {
+            const professorDisciplina = await ProfessorDisciplina.findOne({ disciplina_id: turmaDisciplina.disciplina_id._id }).populate('professor_id');
+            result.push({
+                nome: turmaDisciplina.disciplina_id.nome,
+                professor: professorDisciplina ? professorDisciplina.professor_id : null
+            });
+        }
+
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao buscar disciplinas da turma.' });
+    }
+});
+
+
+app.post('/turmas/:turma_id/disciplinas', async (req, res) => {
+    try {
+        const { disciplinaId } = req.body;
+        await TurmasDisciplinas.create({ turma_id: req.params.turmaId, disciplina_id: disciplinaId });
+        res.status(200).json({ message: 'Disciplina adicionada com sucesso!' });
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao adicionar disciplina.' });
+    }
+});
+
+app.post('/alunosturmas', async (req, res) => {
+    try {
+        const { aluno_id, turma_id } = req.body;
+
+        
+        const novaAssociacao = new AlunosTurmas({
+            aluno_id,
+            turma_id
+        });
+
+        
+        await novaAssociacao.save();
+
+        res.status(201).json({ message: 'Aluno associado à turma com sucesso!', novaAssociacao });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao associar aluno à turma.' });
+    }
+});
+
+//================================================================================================================//
+//================================================================================================================//
+app.post('/Conceitos', async (req, res) => {
+    try {
+        const { aluno, disciplina, conceito } = req.body;
+
+        
+        const novoConceito = new Conceito({
+            aluno,
+            disciplina,
+            conceito
+        });
+
+       
+        await novoConceito.save();
+
+        res.status(201).json({ message: 'Conceito criado com sucesso!', novoConceito });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao criar conceito.' });
+    }
+});
 //================================================================================================================//
 //================================================================================================================//
 app.get('/comunicados', async (req, res) => {

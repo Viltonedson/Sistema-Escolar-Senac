@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes da Turma</title>
+    <link rel="stylesheet" href="academico.css">
+</head>
+<body>
+    <div class="container">
+        <h1 id="nomeTurma"></h1>
+        
+        <!-- Formulário para adicionar Disciplina -->
+        <h3>Adicionar Disciplina</h3>
+        <form id="addDisciplinaForm">
+            <label for="disciplinasSelect">Selecione uma Disciplina:</label>
+            <select id="disciplinasSelect"></select>
+            <button id="adicionarDisciplinaButton" type="submit">Adicionar Disciplina</button>
+        </form>
+
+        <!-- Tabela de disciplinas vinculadas à turma -->
+        <h3>Disciplinas da Turma</h3>
+        <table id="disciplinas-table">
+            <thead>
+                <tr>
+                    <th>Disciplina</th>
+                    <th>Professor</th>
+                </tr>
+            </thead>
+            <tbody id="disciplinas-list">
+                <!-- As disciplinas serão listadas aqui -->
+            </tbody>
+        </table>
+
+        <!-- Seção de Alunos -->
+        <h3>Alunos da Turma</h3>
+        <ul id="listaAlunos"></ul>
+        <button id="adicionarAlunoButton">Adicionar Aluno</button>
+        <button id="adicionarAlunoButton">Gerenciar Conceito</button>
+        <!-- Modal para adicionar aluno -->
+        <div id="alunoModal" class="modal">
+            <div class="modal-content">
+                <span id="closeAlunoModal" class="close">&times;</span>
+                <h2>Adicionar Aluno à Turma</h2>
+                <form id="adicionarAlunoForm">
+                    <label for="alunosSelect">Selecione Aluno:</label>
+                    <select id="alunosSelect"></select>
+                    <button type="submit">Adicionar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="alunosturmas.js"></script>
+</body>
+</html>

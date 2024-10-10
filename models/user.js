@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 
 
-//Criando entidade(tabela)
 const User = mongoose.model('User',{
     name: String,
     email: String,

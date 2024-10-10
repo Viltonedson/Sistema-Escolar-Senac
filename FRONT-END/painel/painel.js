@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const logoutButton = document.getElementById('logout');
     const menuItems = document.querySelectorAll('.sidebar ul li a');
-
+    const contentArea = document.getElementById('content-area');
+    const links = document.querySelectorAll('aside.sidebar a[data-section]');
 
     function loadPage(pageUrl) {
         fetch(pageUrl)
@@ -24,4 +25,5 @@ document.addEventListener('DOMContentLoaded', function() {
     logoutButton.addEventListener('click', function() {
         window.location.href = '../login/index.html';
     });
+    
 });

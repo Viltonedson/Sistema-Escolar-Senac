@@ -1,26 +1,40 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const turmasList = document.getElementById('turmas-list');
 
     // Função para buscar turmas do backend
     async function fetchTurmas() {
         try {
-            const response = await fetch('http://localhost:3000/turmas'); // Ajuste a URL conforme necessário
-            if (!response.ok) {
-                throw new Error('Erro ao buscar turmas');
-            }
-
+            const response = await fetch('http://localhost:3000/turmas');
             const turmas = await response.json();
-            turmasList.innerHTML = ''; // Limpar lista anterior
-
-            // Adicionar as turmas à tabela
+            
             turmas.forEach(turma => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${turma.nome}</td>
-                    <td>${turma.ano}</td>
-                    <td>${turma.semestres}</td>
-                    <td>${turma.turno}</td>
-                `;
+                
+                // Criando as células da tabela
+                const nomeTd = document.createElement('td');
+                const anoTd = document.createElement('td');
+                const semestreTd = document.createElement('td');
+                const turnoTd = document.createElement('td');
+                
+                // Preenchendo os valores nas células
+                nomeTd.textContent = turma.nome;
+                anoTd.textContent = turma.ano;
+                semestreTd.textContent = turma.semestre;
+                turnoTd.textContent = turma.turno;
+
+                // Adiciona um evento de clique na linha para redirecionar
+                tr.addEventListener('click', () => {
+                    // Redireciona para a página de detalhes da turma
+                    window.location.href = `alunosturmas.html?turmaId=${turma._id}`;
+                });
+
+                // Adiciona as células à linha
+                tr.appendChild(nomeTd);
+                tr.appendChild(anoTd);
+                tr.appendChild(semestreTd);
+                tr.appendChild(turnoTd);
+
+                // Adiciona a linha à tabela
                 turmasList.appendChild(tr);
             });
         } catch (error) {
@@ -28,6 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Carregar as turmas ao abrir a página
+    // Buscar e exibir as turmas ao carregar a página
     fetchTurmas();
 });

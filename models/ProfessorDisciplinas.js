@@ -4,12 +4,12 @@ const mongoose = require('mongoose')
 const ProfessorDisciplinasSchema = new mongoose.Schema({
     professor_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Aqui é o modelo User, que você já definiu
+        ref: 'User',
         required: true
     },
     disciplina_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Disciplina', // Aqui é o modelo Disciplina, que você já definiu
+        ref: 'Disciplina',
         required: true
     }
 });
