@@ -440,6 +440,39 @@ app.post('/Conceitos', async (req, res) => {
         res.status(500).json({ error: 'Erro ao criar conceito.' });
     }
 });
+
+app.get('/turmas/:turmaId/disciplinas', async (req, res) => {
+    try {
+        const turmaId = req.params.turmaId;
+        const disciplinas = await TurmasDisciplinas.find({ turma_id: turmaId }).populate('disciplina');
+        res.json(disciplinas.map(td => td.disciplina));
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar disciplinas da turma' });
+    }
+});
+// Buscar alunos e conceitos vinculados a uma disciplina
+app.get('/disciplinas/:disciplinaId/alunos-conceitos', async (req, res) => {
+    try {
+        const disciplinaId = req.params.disciplinaId;
+
+      
+        const alunosTurmas = await AlunosTurmas.find({ disciplina_id: disciplinaId }).populate('aluno');
+        const conceitos = await Conceito.find({ disciplina: disciplinaId });
+
+        
+        const alunosConceitos = alunosTurmas.map(alunoTurma => {
+            const conceito = conceitos.find(c => c.aluno.equals(alunoTurma.aluno._id));
+            return {
+                aluno: alunoTurma.aluno,
+                conceito: conceito || null
+            };
+        });
+
+        res.json(alunosConceitos);
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar alunos e conceitos' });
+    }
+});
 //================================================================================================================//
 //================================================================================================================//
 app.get('/comunicados', async (req, res) => {
