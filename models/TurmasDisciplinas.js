@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
-const turmasDisciplinasSchema = new mongoose.Schema({
+const turmasDisciplinas = new mongoose.Schema({
     turma_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'classes',
+        ref: 'Turmas',
         required: true
     },
     disciplina_id: {
@@ -13,7 +13,7 @@ const turmasDisciplinasSchema = new mongoose.Schema({
     }
 });
 
-const TurmasDisciplinas = mongoose.model('TurmasDisciplinas', turmasDisciplinasSchema);
+const TurmasDisciplinas = mongoose.model('TurmasDisciplinas', turmasDisciplinas);
 
 module.exports = TurmasDisciplinas
 

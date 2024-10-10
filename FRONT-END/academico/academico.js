@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const turmaData = { nome, ano, semestres, turno };
 
         try {
-            const response = await fetch('http://localhost:3000/turmas', {
+            const response = await fetch('http://localhost:3000/Turmas', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const disciplinaData = { nome, descricao };
 
         try {
-            const response = await fetch('http://localhost:3000/disciplinas', {
+            const response = await fetch('http://localhost:3000/Disciplinas', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -94,24 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Funções para buscar e popular turmas e disciplinas
-  
-
-    async function fetchDisciplinas() {
-        const response = await fetch('http://localhost:3000/disciplinas');
-        const disciplinas = await response.json();
-        const disciplinaList = document.getElementById('disciplina-list');
-        disciplinaList.innerHTML = ''; // Limpar a lista antes de popular
-
-        disciplinas.forEach(disciplina => {
-            const li = document.createElement('li');
-            li.textContent = `${disciplina.nome} - ${disciplina.descricao}`;
-            disciplinaList.appendChild(li);
-        });
-    }
-
-    // Chamar as funções para carregar turmas e disciplinas ao carregar a página
-    document.getElementById('visualizarDisciplinasButton').addEventListener('click', fetchDisciplinas);
 });
 
 // Fechar os modais quando o usuário clicar fora deles
@@ -126,3 +108,7 @@ window.onclick = function(event) {
         disciplinaModal.style.display = 'none';
     }
 };
+
+
+
+//========================================================

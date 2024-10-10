@@ -3,9 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Turmas MedioTEC</title>
+    <title>Gerenciamento de Turmas</title>
+    <link rel="stylesheet" href="turmas.css">
 </head>
 <body>
-    <h1>TURMASSSS</h1>
+    <div class="container">
+        <h1>Gerenciamento de Turmas</h1>
+        
+        <h2>Turmas</h2>
+        <table id="turmas-table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Ano</th>
+                    <th>Semestre</th>
+                    <th>Turno</th>
+                </tr>
+            </thead>
+            <tbody id="turmas-list">
+                <!-- As turmas serão inseridas aqui pelo JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="turmas.js"></script>
 </body>
 </html>

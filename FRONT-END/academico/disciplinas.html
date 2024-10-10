@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alocar Professores a Disciplinas</title>
+    <link rel="stylesheet" href="academico.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gerenciamento de Professores e Disciplinas</h1>
+        
+        <h2>Disciplinas</h2>
+        <ul id="disciplina-list"></ul>
+
+       
+
+        <!-- Modal para alocar professores -->
+        <div id="alocarModal" class="modal">
+            <div class="modal-content">
+                <span id="closeModal" class="close">&times;</span>
+                <h2>Alocar Professores à Disciplina</h2>
+                
+                <form id="alocarForm">
+                    <div>
+                        <label for="professores">Selecione Professores:</label>
+                        <select id="professoresDisciplina" multiple></select>
+                    </div>
+                    <button id="alocarProfessoresButton">Alocar Professores</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="disciplina.js"></script>
+</body>
+</html>

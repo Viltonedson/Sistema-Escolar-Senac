@@ -18,6 +18,7 @@ const User = require('./models/user')
 const Turmas = require('./models/Turmas')
 const Disciplinas = require('./models/Disciplinas')
 const Comunicados = require('./models/Comunicado')
+const ProfessorDisciplina = require('./models/ProfessorDiscipinas');
 
 //Abrir Rota - Public Route
 app.get('/', (req, res) => {
@@ -274,7 +275,7 @@ try {
 //================================================================================================================//
 
 // Criar turma
-app.post('/turmas', async (req, res) => {
+app.post('/Turmas', async (req, res) => {
     const { nome, ano, semestres, turno } = req.body;
     try {
         const turma = new Turmas({ nome, ano, semestres, turno });
@@ -286,7 +287,7 @@ app.post('/turmas', async (req, res) => {
 });
 
 // Visualizar todas as turmas
-app.get('/turmas', async (req, res) => {
+app.get('/Turmas', async (req, res) => {
     try {
         const turmas = await Turmas.find();
         res.status(200).json(turmas);
@@ -296,7 +297,7 @@ app.get('/turmas', async (req, res) => {
 });
 
 // Criar disciplina
-app.post('/disciplinas', async (req, res) => {
+app.post('/Disciplinas', async (req, res) => {
     const { nome, descricao } = req.body;
     try {
         const disciplina = new Disciplinas({ nome, descricao });
@@ -308,7 +309,7 @@ app.post('/disciplinas', async (req, res) => {
 });
 
 // Visualizar todas as disciplinas
-app.get('/disciplinas', async (req, res) => {
+app.get('/Disciplinas', async (req, res) => {
     try {
         const disciplinas = await Disciplinas.find();
         res.status(200).json(disciplinas);
@@ -316,6 +317,55 @@ app.get('/disciplinas', async (req, res) => {
         res.status(500).json({ message: 'Erro ao buscar disciplinas', error });
     }
 });
+
+// Rota para alocar professores a uma disciplina
+router.post('/ProfessorDisciplinas', async (req, res) => {
+    try {
+        const { disciplinaId, professores } = req.body;
+        if (!disciplinaId || !Array.isArray(professores) || professores.length === 0) {
+            return res.status(400).json({ message: 'Disciplina ID e professores são obrigatórios.' });
+        }
+
+        // Criar um novo documento para cada professor alocado à disciplina
+        const alocacoes = professores.map(professorId => ({
+            professor_id: professorId,
+            disciplina_id: disciplinaId,
+        }));
+        
+        await ProfessorDisciplinas.insertMany(alocacoes);
+        
+        res.status(201).json({ message: 'Professores alocados com sucesso!' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erro ao alocar professores' });
+    }
+});
+module.exports = router;
+app.get('/professores', async (req, res) => {
+    try {
+        const professores = await User.find({ tipodeUsuario: 'Professor' });
+        res.status(200).json(professores);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao buscar professores', error });
+    }
+});
+
+// Rota para buscar usuários do tipo Professor
+app.get('/users', async (req, res) => {
+    try {
+        const { tipodeUsuario } = req.query; // Pega o tipo de usuário da query
+        let query = {};
+        if (tipodeUsuario) {
+            query.tipodeUsuario = tipodeUsuario; // Filtra pelo tipo de usuário
+        }
+        const users = await User.find(query); // Busca usuários no banco
+        res.json(users); // Retorna a lista de usuários
+    } catch (error) {
+        console.error('Erro ao buscar usuários:', error);
+        res.status(500).send('Erro ao buscar usuários');
+    }
+});
+
 
 //================================================================================================================//
 //================================================================================================================//
