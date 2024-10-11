@@ -1,19 +1,21 @@
 #Sistema de Cadastro de Alunos e Professores Senac
 
-2.#Descrçáo
+.#Descrçáo
 Nosso Sistema de Cadastro teve de inicio um foco de trazer 
 a melhor usabilidade para o gestor e professor do senac!
 
 
 
-4.#Uso
+.#Uso
 Para poder ultilizar esse projeto foi necessario usar: 
+
 `-npm install express mongoose jsonwebtoken bcrypt dotenv` 
 
 Para podermos atualizar o servidor em tempo real
+
 `[-npm install nodemon`
 
-8.#Tecnologias Usadas 
+.#Tecnologias Usadas 
 
 Front End: Javascript, HTML, CSS!!
 Back End: Node JS, Mongo DB!!
@@ -26,6 +28,6 @@ Back End: Node JS, Mongo DB!!
 ![css](https://github.com/user-attachments/assets/0c9d9339-65f0-4625-932e-7b3e510e1469)
 
 
-10.#Contribuiçao no Projeto
+.#Contribuiçao no Projeto
 
 
