@@ -14,10 +14,16 @@ Para podermos atualizar o servidor em tempo real
 -npm install nodemon 
 
 8.#Tecnologias Usadas 
-- 
- ![mongo](https://github.com/user-attachments/assets/c4473103-4406-4aef-88fc-1b615f52b04e)
-![nodejs](https://github.com/user-attachments/assets/e06f4cba-1133-4a24-bf67-cc8c87dc0fd2)
-![js](https://github.com/user-attachments/assets/b6ca3463-9fc0-46fd-9c68-aa1e2a3bd9f0)
+Front End: Javascript, HTML, CSS!!
+Back End: Node JS, Mongo DB!!
+
+
+![mongo](https://github.com/user-attachments/assets/2af3c29d-c5c7-4869-a10f-683dbebcc0b6)
+![nodejs](https://github.com/user-attachments/assets/ef6a23c9-345f-4cb9-9789-a09077bd1855)
+![js](https://github.com/user-attachments/assets/8692a37e-b074-4582-bf03-fbbd79e27a5f)
+![html](https://github.com/user-attachments/assets/3475b32d-ee8c-47ff-87e1-8c30f6097f2e)
+![css](https://github.com/user-attachments/assets/0c9d9339-65f0-4625-932e-7b3e510e1469)
+
 
 10.#Contribuiçao no Projeto
 
