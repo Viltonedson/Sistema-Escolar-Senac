@@ -5,39 +5,3 @@ yarn-debug.log
 yarn-error.log
 
 
-# Build outputs
-/build
-/dist
-/.next
-
-# Mobile specific
-*.apk
-*.aab
-*.ipa
-*.xcarchive
-
-# IDE specific
-.idea/
-.vscode/
-*.swp
-*.swo
-.DS_Store
-
-# React Native specific
-.expo/
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-*.orig.*
-web-build/
-
-# Temporary files
-*.log
-*.tmp
-.tmp/
-.temp/
-
-# Testing
-/coverage
