@@ -1,6 +1,14 @@
 // Extrair turmaId da URL
 const urlParams = new URLSearchParams(window.location.search);
 const turmaId = urlParams.get('turmaId');
+
+// Verificar se temos um turmaId válido
+if (!turmaId) {
+    alert('ID da turma não fornecido');
+    // Redirecionar para a página anterior ou mostrar mensagem de erro
+    window.location.href = 'academico.html';
+}
+
 const disciplinasList = document.getElementById('disciplinas-list');
 const disciplinasSelect = document.getElementById('disciplinasSelect');
 const turmaNome = document.getElementById('nomeTurma');
@@ -23,9 +31,8 @@ closeAlunoModal.addEventListener('click', () => {
 // Buscar detalhes da turma e disciplinas
 async function fetchTurmaDetails() {
     try {
-        const response = await fetch(`http://localhost:3000/turmas/${turma._id}`);
+        const response = await fetch(`http://localhost:3000/turmas/${turmaId}`);
         const turma = await response.json();
-        turmaNome.textContent = turma.nome;
         
         if (turma && turma.nome) {
             turmaNome.textContent = turma.nome;
@@ -172,7 +179,9 @@ document.getElementById('adicionarAlunoForm').addEventListener('submit', async (
     }
 });
 
-// Carregar os detalhes da turma, disciplinas e alunos ao carregar a página
-fetchTurmaDetails();
-fetchDisciplinas();
-fetchAlunos();
+// Carregar os dados quando a página carregar
+document.addEventListener('DOMContentLoaded', () => {
+    fetchTurmaDetails();
+    fetchDisciplinas();
+    fetchAlunos();
+});
