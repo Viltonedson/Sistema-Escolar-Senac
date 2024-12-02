@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "215264954090",
+    "project_id": "sistema-escolar-senac",
+    "storage_bucket": "sistema-escolar-senac.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:215264954090:android:cb2897102d9c317a9a3993",
+        "android_client_info": {
+          "package_name": "sesenac.mediotech"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRIOAkQmdd4uP0b0LBz_wNKUEqlxVCZH4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
