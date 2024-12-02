@@ -25,14 +25,14 @@ app.use(express.json())
 app.use(cors());
 
 //Models, Rotas
-const User = require('./models/user')
+const User = require('./models/User')
 const Turmas = require('./models/Turmas')
 const Disciplinas = require('./models/Disciplinas')
-const Comunicados = require('./models/Comunicado')
-const ProfessorDisciplinas = require('./models/ProfessorDisciplinas');
-const TurmasDisciplinas = require('./models/TurmasDisciplinas');
-const AlunosTurmas = require('./models/AlunosTurmas');
-const Conceito = require('./models/Conceito');
+const Comunicados = require('./models/Comunicados')
+const ProfessorDisciplinas = require('./models/ProfessorDisciplinas')
+const TurmasDisciplinas = require('./models/TurmasDisciplinas')
+const AlunosTurmas = require('./models/AlunosTurmas')
+const Conceito = require('./models/Conceito')
 
 //Abrir Rota - Public Route
 app.get('/', (req, res) => {
