@@ -493,13 +493,13 @@ app.post('/alunosturmas', async (req, res) => {
     try {
         const { aluno_id, turma_id } = req.body;
 
-        
+        // Criar nova associação
         const novaAssociacao = new AlunosTurmas({
             aluno_id,
             turma_id
         });
 
-        
+        // Salvar a nova associação
         await novaAssociacao.save();
 
         res.status(201).json({ message: 'Aluno associado à turma com sucesso!', novaAssociacao });
@@ -514,7 +514,7 @@ app.post('/conceitos', async (req, res) => {
     try {
         const { aluno, disciplina, conceito } = req.body;
 
-        
+        // Criar novo conceito
         const novoConceito = new Conceito({
             aluno,
             disciplina,
@@ -533,11 +533,11 @@ app.get('/disciplinas/:disciplinaId/alunos-conceitos', async (req, res) => {
     try {
         const disciplinaId = req.params.disciplinaId;
 
-      
+      // Buscar alunos da turma
         const alunosTurmas = await AlunosTurmas.find({ disciplina_id: disciplinaId }).populate('aluno');
         const conceitos = await Conceito.find({ disciplina: disciplinaId });
 
-        
+        // Combinar alunos com conceitos
         const alunosConceitos = alunosTurmas.map(alunoTurma => {
             const conceito = conceitos.find(c => c.aluno.equals(alunoTurma.aluno._id));
             return {
@@ -893,12 +893,15 @@ app.delete('/disciplinas/:disciplinaId/professores/:professorId', checkToken, as
 //Credenciais
 const dbUser = process.env.DB_USER
 const dbPassword = process.env.DB_PASS
+const PORT = process.env.PORT || 3000
 
 mongoose
 .connect(`mongodb+srv://${dbUser}:${dbPassword}@sistemaescolar.xkjs7.mongodb.net/?retryWrites=true&w=majority&appName=SistemaEscolar`)
 .then(() => {
-        app.listen(3000)
-        console.log('Conectado ao Banco com Sucesso!')})
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`)
+    })
+})
 .catch((err) => console.log((err)))
 
 // Configurar CORS para permitir requisições de qualquer origem
