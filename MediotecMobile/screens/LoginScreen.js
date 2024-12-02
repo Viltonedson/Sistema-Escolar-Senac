@@ -17,8 +17,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// URL base da API - substitua pelo IP da sua máquina
-const API_URL = 'http://192.168.1.7:3000'; // Altere para o IP da sua máquina
+// URL base da API
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.7:3000';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
