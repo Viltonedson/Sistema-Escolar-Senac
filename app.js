@@ -4,8 +4,9 @@ const express = require('express')
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const cors = require('cors'); 
-const router = express.Router();
+const cors = require('cors')
+const router = express.Router()
+const port = process.env.PORT || 3001
 
 const app = express()
 
@@ -893,14 +894,13 @@ app.delete('/disciplinas/:disciplinaId/professores/:professorId', checkToken, as
 //Credenciais
 const dbUser = process.env.DB_USER
 const dbPassword = process.env.DB_PASS
-const PORT = process.env.PORT || 3000
 
 mongoose
 .connect(`mongodb+srv://${dbUser}:${dbPassword}@sistemaescolar.xkjs7.mongodb.net/?retryWrites=true&w=majority&appName=SistemaEscolar`)
 .then(() => {
     console.log('Conectado ao MongoDB!')
-    app.listen(PORT, '0.0.0.0', () => {
-        console.log(`Servidor rodando na porta ${PORT}`)
+    app.listen(port, () => {
+        console.log(`Servidor rodando na porta ${port}`)
     })
 })
 .catch((err) => console.log(err))
