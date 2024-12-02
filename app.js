@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
 const router = express.Router()
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3000
 
 const app = express()
 
