@@ -1,14 +1,25 @@
-/*imports*/
-require ('dotenv').config()
-const express = require('express')
-const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const cors = require('cors')
-const router = express.Router()
-const port = process.env.PORT || 3000
+import 'dotenv/config';
+import express from 'express';
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import cors from 'cors';
 
-const app = express()
+import User from './models/user.js';
+import Turmas from './models/Turmas.js';
+import Disciplinas from './models/Disciplinas.js';
+import Comunicados from './models/Comunicado.js';
+import ProfessorDisciplinas from './models/ProfessorDisciplinas.js';
+import TurmasDisciplinas from './models/TurmasDisciplinas.js';
+import AlunosTurmas from './models/AlunosTurmas.js';
+import Conceito from './models/Conceito.js';
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+// Configuração JSON
+app.use(express.json());
+app.use(cors());
 
 // Configuração do CORS
 app.use((req, res, next) => {
@@ -20,20 +31,6 @@ app.use((req, res, next) => {
     }
     next();
 });
-
-//Config JSON resposta
-app.use(express.json())
-app.use(cors());
-
-//Models, Rotas
-const User = require('./models/user')
-const Turmas = require('./models/Turmas')
-const Disciplinas = require('./models/Disciplinas')
-const Comunicados = require('./models/Comunicado')
-const ProfessorDisciplinas = require('./models/ProfessorDisciplinas')
-const TurmasDisciplinas = require('./models/TurmasDisciplinas')
-const AlunosTurmas = require('./models/AlunosTurmas')
-const Conceito = require('./models/Conceito')
 
 //Abrir Rota - Public Route
 app.get('/', (req, res) => {
@@ -176,7 +173,7 @@ app.get('/user', async (req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = app;
 
 app.put('/user/:id', async (req, res) => {
     const { id } = req.params;

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const AlunosTurmasSchema = new mongoose.Schema({
     aluno_id: {
@@ -8,14 +8,11 @@ const AlunosTurmasSchema = new mongoose.Schema({
     },
     turma_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Turmas', 
+        ref: 'Turmas',
         required: true
     }
 }, {
-    timestamps: true 
+    timestamps: true
 });
 
-
-const AlunosTurmas = mongoose.model('AlunosTurmas', AlunosTurmasSchema);
-
-module.exports = AlunosTurmas;
+export default mongoose.model('AlunosTurmas', AlunosTurmasSchema);

@@ -1,5 +1,4 @@
-const mongoose = require('mongoose')
-
+import mongoose from 'mongoose';
 
 const User = mongoose.model('User',{
     name: String,
@@ -14,4 +13,4 @@ const User = mongoose.model('User',{
         enum: ['Aluno', 'Professor', 'Coordenador'],},
 })
 
-module.exports = User
+export default User

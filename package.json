@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Sistema de Cadastro de Alunos e Professores Senac",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
