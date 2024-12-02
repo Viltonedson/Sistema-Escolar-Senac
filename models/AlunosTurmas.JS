@@ -15,4 +15,5 @@ const AlunosTurmasSchema = new mongoose.Schema({
     timestamps: true
 });
 
-export default mongoose.model('AlunosTurmas', AlunosTurmasSchema);
+const AlunosTurmas = mongoose.model('AlunosTurmas', AlunosTurmasSchema);
+export default AlunosTurmas;

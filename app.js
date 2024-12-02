@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
 
+// Imports dos modelos com os nomes exatos dos arquivos
 import User from './models/user.js';
 import Turmas from './models/Turmas.js';
 import Disciplinas from './models/Disciplinas.js';
