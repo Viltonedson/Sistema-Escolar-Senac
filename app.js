@@ -898,11 +898,12 @@ const PORT = process.env.PORT || 3000
 mongoose
 .connect(`mongodb+srv://${dbUser}:${dbPassword}@sistemaescolar.xkjs7.mongodb.net/?retryWrites=true&w=majority&appName=SistemaEscolar`)
 .then(() => {
-    app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`)
+    console.log('Conectado ao MongoDB!')
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`Servidor rodando na porta ${PORT}`)
     })
 })
-.catch((err) => console.log((err)))
+.catch((err) => console.log(err))
 
 // Configurar CORS para permitir requisições de qualquer origem
 app.use(cors({
