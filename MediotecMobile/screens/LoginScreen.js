@@ -38,9 +38,9 @@ export default function LoginScreen({ navigation }) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 segundos de timeout
 
-      console.log('Tentando conectar à:', `${API_URL}/auth/login`);
+      console.log('Tentando conectar à:', `${API_URL}/auth/login/mobile`);
       
-      const response = await fetch(`${API_URL}/auth/login`, {
+      const response = await fetch(`${API_URL}/auth/login/mobile`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

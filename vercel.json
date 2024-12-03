@@ -8,6 +8,16 @@
     ],
     "routes": [
         {
+            "src": "/auth/login/mobile",
+            "methods": ["POST", "OPTIONS"],
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
+            },
+            "dest": "app.js"
+        },
+        {
             "src": "/(.*)",
             "dest": "app.js"
         }
