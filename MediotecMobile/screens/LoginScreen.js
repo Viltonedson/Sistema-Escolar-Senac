@@ -16,9 +16,10 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_CONFIG } from '../config';
 
 // URL base da API
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.7:3000';
+const API_URL = API_CONFIG.getApiUrl();
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -32,44 +33,48 @@ export default function LoginScreen({ navigation }) {
     }
 
     setLoading(true);
-
+    
     try {
-      const response = await fetch(`${API_URL}/auth/login/mobile`, {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 segundos de timeout
+
+      console.log('Tentando conectar à:', `${API_URL}/auth/login`);
+      
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          'Accept': 'application/json'
         },
-        body: JSON.stringify({
-          email: email,
-          password: senha,
-        }),
+        body: JSON.stringify({ email, senha }),
+        signal: controller.signal,
       });
 
-      const data = await response.json();
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
-        Alert.alert('Erro', data.msg || 'Erro ao fazer login');
-        setLoading(false);
-        return;
+        const errorText = await response.text();
+        console.error('Resposta da API:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Verificar se é um aluno
-      if (data.user.tipodeUsuario !== 'Aluno') {
-        Alert.alert('Erro', 'Acesso negado. Apenas alunos podem fazer login no aplicativo.');
-        setLoading(false);
-        return;
-      }
-
-      // Salvar o token e dados do usuário
+      const data = await response.json();
+      
       await AsyncStorage.setItem('userToken', data.token);
       await AsyncStorage.setItem('userData', JSON.stringify(data.user));
-
-      // Navegar para a tela principal
+      
       navigation.replace('Dashboard');
     } catch (error) {
-      console.error(error);
-      Alert.alert('Erro', 'Erro ao conectar com o servidor');
+      console.error('Erro completo:', error);
+      let message = 'Erro ao fazer login';
+      
+      if (error.name === 'AbortError') {
+        message = 'Tempo de conexão esgotado. Verifique sua internet.';
+      } else if (error.message.includes('Network request failed')) {
+        message = 'Erro de conexão. Verifique sua internet ou se o servidor está online.';
+      }
+      
+      Alert.alert('Erro', message);
     } finally {
       setLoading(false);
     }

@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_CONFIG } from '../config';
 
-const API_URL = 'http://192.168.1.7:3000'; // Altere para o IP da sua máquina
+const API_URL = API_CONFIG.getApiUrl();
 
 export default function InformacoesAcademicasScreen() {
   const [loading, setLoading] = useState(true);
