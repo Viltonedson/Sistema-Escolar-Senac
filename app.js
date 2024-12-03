@@ -6,14 +6,14 @@ import jwt from 'jsonwebtoken';
 import cors from 'cors';
 
 // Imports dos modelos com os nomes exatos dos arquivos
-import User from './models/User.js';
-import Turmas from './models/Turmas.js';
-import Disciplinas from './models/Disciplinas.js';
-import Comunicados from './models/Comunicados.js';
-import ProfessorDisciplinas from './models/ProfessorDisciplinas.js';
-import TurmasDisciplinas from './models/TurmasDisciplinas.js';
-import AlunosTurmas from './models/AlunosTurmas.js';
-import Conceito from './models/Conceito.js';
+import User from '../models/user.js';
+import Turmas from '../models/Turmas.js';
+import Disciplinas from '../models/Disciplinas.js';
+import Comunicados from '../models/Comunicados.js';
+import ProfessorDisciplinas from '../models/ProfessorDisciplinas.js';
+import TurmasDisciplinas from '../models/TurmasDisciplinas.js';
+import AlunosTurmas from '../models/AlunosTurmas.js';
+import Conceito from '../models/Conceito.js';
 
 const app = express();
 const port = process.env.PORT || 3000;

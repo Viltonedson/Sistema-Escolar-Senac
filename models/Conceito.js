@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const conceitoSchema = new mongoose.Schema({
     aluno: {
@@ -18,4 +18,5 @@ const conceitoSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Conceito', conceitoSchema);
+const Conceito = mongoose.model('Conceito', conceitoSchema);
+export default Conceito;

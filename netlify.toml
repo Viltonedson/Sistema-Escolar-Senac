@@ -4,9 +4,9 @@
   publish = "public"
 
 [functions]
-  external_node_modules = ["express"]
+  external_node_modules = ["express", "mongoose", "jsonwebtoken", "cors", "dotenv"]
+  included_files = ["models/**/*.js"]
   node_bundler = "esbuild"
-  included_files = ["models/**"]
 
 [[redirects]]
   from = "/*"

@@ -1,14 +1,16 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose';
 
-const Turmas = mongoose.model('Turmas',{
+const turmasSchema = new mongoose.Schema({
     nome: String,
     ano: String,
     semestres: Number,
     turno: {
         type: String,
         required: true,
-        enum: ['Manhã', 'Tarde', 'Noite'],},
-    }  
-)
+        enum: ['Manhã', 'Tarde', 'Noite']
+    }
+});
 
-module.exports = Turmas
+const Turmas = mongoose.model('Turmas', turmasSchema);
+
+export default Turmas;

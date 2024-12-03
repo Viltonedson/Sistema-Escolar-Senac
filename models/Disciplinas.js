@@ -1,10 +1,9 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose';
 
-
-
-const Disciplinas = mongoose.model('Disciplinas',{
+const disciplinasSchema = new mongoose.Schema({
     nome: String,
     descricao: String,
-})
+});
 
-module.exports = Disciplinas
+const Disciplinas = mongoose.model('Disciplinas', disciplinasSchema);
+export default Disciplinas;

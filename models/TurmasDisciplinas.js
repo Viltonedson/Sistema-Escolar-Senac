@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const turmasDisciplinas = new mongoose.Schema({
     turma_id: {
@@ -15,6 +15,4 @@ const turmasDisciplinas = new mongoose.Schema({
 
 const TurmasDisciplinas = mongoose.model('TurmasDisciplinas', turmasDisciplinas);
 
-module.exports = TurmasDisciplinas
-
-
+export default TurmasDisciplinas;

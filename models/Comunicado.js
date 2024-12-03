@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const comunicadosSchema = new mongoose.Schema({
     titulo: { type: String, required: true },
@@ -13,6 +13,6 @@ const comunicadosSchema = new mongoose.Schema({
     status: { type: String, enum: ['ativo', 'arquivado', 'deletado'], default: 'ativo' }
 });
 
-const Comunicados = mongoose.model('Comunicados', comunicadosSchema);
+const Comunicado = mongoose.model('Comunicados', comunicadosSchema);
 
-module.exports = Comunicados;
+export default Comunicado;
