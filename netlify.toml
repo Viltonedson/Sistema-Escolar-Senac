@@ -5,7 +5,7 @@
 
 [functions]
   external_node_modules = ["express", "mongoose", "jsonwebtoken", "cors", "dotenv"]
-  included_files = ["models/**/*.js"]
+  included_files = ["models/*"]
   node_bundler = "esbuild"
 
 [[redirects]]
