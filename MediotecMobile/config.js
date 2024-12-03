@@ -1,6 +1,6 @@
 export const API_CONFIG = {
     // URL da API no Netlify (produção)
-    PROD_API_URL: 'https://sistemasenac.netlify.app/.netlify/functions/api',
+    PROD_API_URL: 'https://sistemasenac.netlify.app',
     
     // URL da API local (desenvolvimento)
     DEV_API_URL: 'http://192.168.1.7:3000',
