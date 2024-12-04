@@ -1,25 +1,35 @@
-import 'dotenv/config';
-import express from 'express';
-import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import cors from 'cors';
+const express = require('express');
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const cors = require('cors');
+require('dotenv').config();
 
 // Imports dos modelos com os nomes exatos dos arquivos
-import User from './models/user.js';
-import Turmas from './models/Turmas.js';
-import Disciplinas from './models/Disciplinas.js';
-import Comunicados from './models/Comunicados.js';
-import ProfessorDisciplinas from './models/ProfessorDisciplinas.js';
-import TurmasDisciplinas from './models/TurmasDisciplinas.js';
-import AlunosTurmas from './models/AlunosTurmas.js';
-import Conceito from './models/Conceito.js';
+const User = require('./models/user.js');
+const Turmas = require('./models/Turmas.js');
+const Disciplinas = require('./models/Disciplinas.js');
+const ProfessorDisciplinas = require('./models/ProfessorDisciplinas.js');
+const TurmasDisciplinas = require('./models/TurmasDisciplinas.js');
+const AlunosTurmas = require('./models/AlunosTurmas.js');
+const Conceito = require('./models/Conceito.js');
+const Comunicado = require('./models/Comunicado.js');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Configuração JSON
+// Configuração do CORS
+app.use(cors({
+  origin: ['http://localhost:8081', 'http://localhost:19006', 'http://localhost:19000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  credentials: true
+}));
+
+// Middleware para JSON
 app.use(express.json());
+
+// Configuração JSON
 app.use(cors());
 
 // Configuração do CORS
@@ -181,29 +191,28 @@ app.put('/user/:id', async (req, res) => {
     const { name, email, password, numerotelefone, datanascimento, cpf, tipodeUsuario } = req.body;
     
     try {
-    const { id } = req.params;
-    const { name, email, password, numerotelefone, datanascimento, cpf, tipodeUsuario } = req.body;
+        // Verifica se o usuário existe
+        let user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ msg: 'Usuário não encontrado.' });
+        }
 
-    // Verifica se o usuário existe
-     let user = await User.findById(id);
-     if (!user) {
-        return res.status(404).json({ msg: 'Usuário não encontrado.' });
-    }
+        // Atualiza os campos necessários
+        user.name = name || user.name;
+        user.email = email || user.email;
+        if (password) {
+            user.password = await bcrypt.hash(password, 10);
+        }
+        user.numerotelefone = numerotelefone || user.numerotelefone;
+        user.datanascimento = datanascimento || user.datanascimento;
+        user.cpf = cpf || user.cpf;
+        user.tipodeUsuario = tipodeUsuario || user.tipodeUsuario;
 
-     // Atualiza os campos necessários
-    user.name = name || user.name;
-    user.email = email || user.email;
-    user.password = password ? await bcrypt.hash(password, 10) : user.password;
-    user.numerotelefone = numerotelefone || user.numerotelefone;
-    user.datanascimento = datanascimento || user.datanascimento;
-    user.cpf = cpf || user.cpf;
-    user.tipodeUsuario = tipodeUsuario || user.tipodeUsuario;
-
-    await user.save();
-
-    res.json({ msg: 'Usuário atualizado com sucesso.' });
+        await user.save();
+        res.json({ msg: 'Usuário atualizado com sucesso.' });
     } catch (error) {
-    res.status(500).json({ msg: 'Erro ao atualizar usuário.' });
+        console.error(error);
+        res.status(500).json({ msg: 'Erro ao atualizar usuário.' });
     }
 });
 
@@ -228,46 +237,49 @@ app.delete('/users/:id', async (req, res) => {
 //=======================
 //Login User
    app.post('/auth/login', async (req, res) => {
-    const {email, password} = req.body
-    
+    const { email, password } = req.body;
 
-//Validacao
+    // Validacao
     if (!email) {
-        return res.status(422).json({msg : 'O email é obrigatorio'})
+        return res.status(422).json({ msg: 'O email é obrigatorio' });
     }
 
-    if(!password){
-        return res.status(422).json({msg : 'A senha é obrigatória!'})
+    if (!password) {
+        return res.status(422).json({ msg: 'A senha é obrigatória!' });
     }
 
-//Check if user exist
-const user = await User.findOne({email: email})
+    try {
+        // Check if user exists
+        const user = await User.findOne({ email: email });
 
-if (!user){
-    return res.status(404).json({ msg : 'Usuário não encontrado, necessario fazer o registro'})
-}
+        if (!user) {
+            return res.status(404).json({ msg: 'Usuário não encontrado, necessario fazer o registro' });
+        }
 
-//check if password match/existe
-const checkPassword = await bcrypt.compare(password, user.password)
-    if(!checkPassword){
-        return res.status(422).json({ msg : 'Senha Inválida'})
-    }
+        // check if password match
+        if (!user.password) {
+            return res.status(422).json({ msg: 'Erro no sistema de autenticação' });
+        }
 
-    if (user.tipodeUsuario !== 'Coordenador') {
-        return res.status(403).json({ msg: 'Acesso restrito! Apenas coordenadores podem fazer login no sistema.' });
-    }
-    
+        const checkPassword = await bcrypt.compare(password, user.password);
+        
+        if (!checkPassword) {
+            return res.status(422).json({ msg: 'Senha Inválida' });
+        }
 
-try {
-    const secret = process.env.SECRET
-    const token = jwt.sign(
-        {
-            id: user._id,
-    },
-    secret,
-)
-    res.status(200).json({
-        msg: "Autenticação realizada com sucesso",
+        if (user.tipodeUsuario !== 'Coordenador') {
+            return res.status(403).json({ msg: 'Acesso restrito! Apenas coordenadores podem fazer login no sistema.' });
+        }
+
+        const secret = process.env.SECRET;
+        const token = jwt.sign(
+            {
+                id: user._id,
+            },
+            secret,
+        );
+        res.status(200).json({
+            msg: "Autenticação realizada com sucesso",
             token,
             user: {
                 id: user._id,
@@ -275,66 +287,74 @@ try {
                 email: user.email,
                 tipodeUsuario: user.tipodeUsuario
             }
-        })
+        });
 
-} catch (err) {
-    console.log(err);
-    res.status(500).json({
-        msg: 'Ocorreu um erro no servidor, tente novamente mais tarde.',
-    });
-}
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            msg: 'Ocorreu um erro no servidor, tente novamente mais tarde.',
+        });
+    }
 })
 
 // Login específico para o app mobile (apenas alunos)
 app.post('/auth/login/mobile', async (req, res) => {
     try {
+        console.log('Recebendo requisição de login mobile:', req.body);
         const { email, password } = req.body;
 
         // Validar entrada
         if (!email || !password) {
+            console.log('Campos faltando:', { email: !!email, password: !!password });
             return res.status(422).json({ msg: 'Email e senha são obrigatórios!' });
         }
 
-        // Checar se usuário existe e é um aluno
-        const user = await User.findOne({ 
-            email: email,
-            tipodeUsuario: 'Aluno'  // Garantir que é um aluno
-        });
-
+        // Buscar usuário pelo email
+        const user = await User.findOne({ email: email });
+        console.log('Usuário encontrado:', user ? 'Sim' : 'Não');
+        
         if (!user) {
-            return res.status(404).json({ msg: 'Usuário não encontrado ou acesso não autorizado' });
+            return res.status(404).json({ msg: 'Usuário não encontrado' });
         }
 
-        // Checar se senha está correta
-        const checkPassword = await bcrypt.compare(password, user.password);
-        if (!checkPassword) {
-            return res.status(422).json({ msg: 'Senha inválida' });
+        // Verificar senha
+        if (!user.password) {
+            console.error('Usuário não tem senha definida');
+            return res.status(400).json({ msg: 'Usuário não tem senha definida' });
+        }
+
+        const passwordCorreta = await bcrypt.compare(password, user.password);
+        console.log('Senha está correta:', passwordCorreta ? 'Sim' : 'Não');
+
+        if (!passwordCorreta) {
+            return res.status(401).json({ msg: 'Senha incorreta' });
         }
 
         // Gerar token
         const secret = process.env.SECRET;
         const token = jwt.sign(
-            {
-                id: user._id,
-                tipodeUsuario: user.tipodeUsuario
-            },
-            secret,
-            { expiresIn: '24h' }
+            { id: user._id },
+            secret
         );
 
-        // Retornar token e dados do usuário (excluindo a senha)
-        const userResponse = {
-            id: user._id,
-            name: user.name,
-            email: user.email,
-            tipodeUsuario: user.tipodeUsuario
-        };
-
-        res.status(200).json({ msg: 'Autenticação realizada com sucesso!', token, user: userResponse });
+        // Enviar resposta
+        res.status(200).json({
+            msg: "Login realizado com sucesso",
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                tipo: user.tipo
+            }
+        });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ msg: 'Erro no servidor. Tente novamente mais tarde.' });
+        console.error('Erro no login mobile:', error);
+        res.status(500).json({
+            msg: 'Erro no servidor durante o login',
+            error: error.message
+        });
     }
 });
 
@@ -448,7 +468,7 @@ app.get('/users', async (req, res) => {
 });
 
 
-router.get('/turmas/:turma_id/disciplinas', async (req, res) => {
+app.get('/turmas/:turma_id/disciplinas', async (req, res) => {
     try {
         const turmasDisciplinas = await TurmasDisciplinas.find({ turma_id: req.params.turmaId }).populate('disciplina_id');
         const result = [];
@@ -511,19 +531,25 @@ app.post('/alunosturmas', async (req, res) => {
 //================================================================================================================//
 app.post('/conceitos', async (req, res) => {
     try {
-        const { aluno, disciplina, conceito } = req.body;
-
-        // Criar novo conceito
-        const novoConceito = new Conceito({
-            aluno,
-            disciplina,
-            conceito
+        const { aluno_id, disciplina_id, conceito } = req.body;
+        
+        // Criar novo conceito de forma mais simples
+        const novoConceito = await Conceito.create({
+            aluno: aluno_id,
+            disciplina: disciplina_id,
+            conceito: conceito
         });
 
-        await novoConceito.save();
-        res.status(201).json({ message: 'Conceito criado com sucesso!', novoConceito });
+        res.status(201).json({ 
+            message: 'Conceito criado com sucesso!', 
+            conceito: novoConceito 
+        });
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao criar conceito.' });
+        console.error('Erro ao criar conceito:', error.message);
+        res.status(500).json({ 
+            error: 'Erro ao criar conceito', 
+            message: error.message 
+        });
     }
 });
 
@@ -552,144 +578,6 @@ app.get('/disciplinas/:disciplinaId/alunos-conceitos', async (req, res) => {
 });
 //================================================================================================================//
 //================================================================================================================//
-app.get('/comunicados', async (req, res) => {
-    try {
-        const comunicados = await Comunicados.find().populate('autor_id destinatarios');
-        res.status(200).json(comunicados);
-    } catch (error) {
-        res.status(500).json({ message: 'Erro ao buscar comunicados', error });
-    }
-})
-
-app.post('/comunicados', checkToken, async (req, res) => {
-    const { titulo, conteudo, destinatarios } = req.body;
-    const autor_id = req.user.id;
-
-    const novoComunicado = new Comunicados({
-        titulo,
-        conteudo,
-        autor_id,
-        destinatarios
-    });
-
-    try {
-        await novoComunicado.save();
-        res.status(201).json({ message: 'Comunicado criado com sucesso!', novoComunicado });
-    } catch (error) {
-        res.status(500).json({ message: 'Erro ao criar comunicado', error });
-    }
-});
-//================================================================================================================//
-//================================================================================================================//
-// Rota para adicionar disciplina à turma
-app.post('/turmas-disciplinas', async (req, res) => {
-    try {
-        const { turma_id, disciplina_id } = req.body;
-
-        // Verificar se já existe essa relação
-        const existingRelation = await TurmasDisciplinas.findOne({
-            turma_id: turma_id,
-            disciplina_id: disciplina_id
-        });
-
-        if (existingRelation) {
-            return res.status(400).json({ message: 'Esta disciplina já está vinculada a esta turma' });
-        }
-
-        // Criar nova relação
-        const novaTurmaDisciplina = new TurmasDisciplinas({
-            turma_id: turma_id,
-            disciplina_id: disciplina_id
-        });
-
-        await novaTurmaDisciplina.save();
-        res.status(201).json({ message: 'Disciplina adicionada à turma com sucesso' });
-    } catch (error) {
-        console.error('Erro ao adicionar disciplina à turma:', error);
-        res.status(500).json({ message: 'Erro ao adicionar disciplina à turma' });
-    }
-});
-
-//================================================================================================================//
-//================================================================================================================//
-// Rota para adicionar aluno à turma
-app.post('/alunos-turmas', async (req, res) => {
-    try {
-        const { aluno_id, turma_id } = req.body;
-
-        // Verificar se já existe essa relação
-        const existingRelation = await AlunosTurmas.findOne({
-            aluno_id: aluno_id,
-            turma_id: turma_id
-        });
-
-        if (existingRelation) {
-            return res.status(400).json({ message: 'Este aluno já está vinculado a esta turma' });
-        }
-
-        // Criar nova relação
-        const novoAlunoTurma = new AlunosTurmas({
-            aluno_id: aluno_id,
-            turma_id: turma_id
-        });
-
-        await novoAlunoTurma.save();
-        res.status(201).json({ message: 'Aluno adicionado à turma com sucesso' });
-    } catch (error) {
-        console.error('Erro ao adicionar aluno à turma:', error);
-        res.status(500).json({ message: 'Erro ao adicionar aluno à turma' });
-    }
-});
-
-// Rota para buscar alunos de uma turma específica
-app.get('/turmas/:turmaId/alunos', async (req, res) => {
-    try {
-        const alunosTurma = await AlunosTurmas.find({ turma_id: req.params.turmaId })
-            .populate({
-                path: 'aluno_id',
-                select: 'name email numerotelefone datanascimento cpf', // Selecionando apenas os campos necessários
-                match: { tipodeUsuario: 'Aluno' } // Garantindo que só retorne usuários do tipo Aluno
-            })
-            .populate('turma_id', 'nome ano semestres turno'); // Também trazendo dados da turma
-
-        // Filtrando apenas os registros onde aluno_id não é null (devido ao match do populate)
-        const alunosValidos = alunosTurma
-            .filter(at => at.aluno_id !== null)
-            .map(at => ({
-                aluno: at.aluno_id,
-                turma: at.turma_id,
-                dataMatricula: at.createdAt
-            }));
-
-        res.json(alunosValidos);
-    } catch (error) {
-        console.error('Erro ao buscar alunos da turma:', error);
-        res.status(500).json({ message: 'Erro ao buscar alunos da turma' });
-    }
-});
-
-// Rota para buscar alunos disponíveis (que não estão na turma)
-app.get('/turmas/:turmaId/alunos-disponiveis', async (req, res) => {
-    try {
-        // Buscar IDs dos alunos que já estão na turma
-        const alunosTurma = await AlunosTurmas.find({ turma_id: req.params.turmaId });
-        const alunosIds = alunosTurma.map(at => at.aluno_id);
-
-        // Buscar todos os usuários que são alunos e não estão na turma
-        const alunosDisponiveis = await User.find({
-            _id: { $nin: alunosIds },
-            tipodeUsuario: 'Aluno'
-        }, '-password');
-
-        res.json(alunosDisponiveis);
-    } catch (error) {
-        console.error('Erro ao buscar alunos disponíveis:', error);
-        res.status(500).json({ message: 'Erro ao buscar alunos disponíveis' });
-    }
-});
-
-//================================================================================================================//
-//================================================================================================================//
 // Rota para buscar a turma e disciplinas de um aluno específico
 app.get('/turmas/aluno/:alunoId', checkToken, async (req, res) => {
     try {
@@ -702,8 +590,7 @@ app.get('/turmas/aluno/:alunoId', checkToken, async (req, res) => {
         }
 
         // Buscar as disciplinas da turma
-        const turmasDisciplinas = await TurmasDisciplinas.find({ turma_id: alunoTurma.turma_id._id })
-            .populate('disciplina_id', 'nome horario');
+        const turmasDisciplinas = await TurmasDisciplinas.find({ turma_id: alunoTurma.turma_id._id }).populate('disciplina_id');
 
         // Formatar a resposta
         const response = {
@@ -889,6 +776,32 @@ app.delete('/disciplinas/:disciplinaId/professores/:professorId', checkToken, as
 
 //================================================================================================================//
 //================================================================================================================//
+// Rota para buscar todos os conceitos de um aluno
+app.get('/alunos/:alunoId/conceitos', async (req, res) => {
+    try {
+        const { alunoId } = req.params;
+
+        // Buscar todos os conceitos do aluno
+        const conceitos = await Conceito.find({ aluno: alunoId })
+            .populate('disciplina', 'nome'); // Popula os dados da disciplina
+
+        // Se não encontrar conceitos, retorna array vazio
+        if (!conceitos) {
+            return res.json([]);
+        }
+
+        res.json(conceitos);
+    } catch (error) {
+        console.error('Erro ao buscar conceitos do aluno:', error);
+        res.status(500).json({ 
+            error: 'Erro ao buscar conceitos',
+            message: error.message 
+        });
+    }
+});
+
+//================================================================================================================//
+//================================================================================================================//
 //Credenciais
 const dbUser = process.env.DB_USER
 const dbPassword = process.env.DB_PASS
@@ -909,7 +822,7 @@ app.use(cors({
 }));
 
 // Buscar conceitos de um aluno
-app.get('/alunos/:alunoId/conceitos', checkToken, async (req, res) => {
+app.get('/alunos/:alunoId/conceitos', async (req, res) => {
     try {
         const alunoId = req.params.alunoId;
 
