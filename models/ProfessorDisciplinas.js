@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-const ProfessorDisciplinasSchema = new mongoose.Schema({
+const professorDisciplinasSchema = new mongoose.Schema({
     professor_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -13,6 +13,4 @@ const ProfessorDisciplinasSchema = new mongoose.Schema({
     }
 });
 
-const ProfessorDisciplinas = mongoose.model('ProfessorDisciplinas', ProfessorDisciplinasSchema);
-
-export default ProfessorDisciplinas;
+module.exports = mongoose.model('ProfessorDisciplinas', professorDisciplinasSchema);

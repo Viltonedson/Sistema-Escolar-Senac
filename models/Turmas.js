@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const turmasSchema = new mongoose.Schema({
     nome: String,
@@ -11,6 +11,4 @@ const turmasSchema = new mongoose.Schema({
     }
 });
 
-const Turmas = mongoose.model('Turmas', turmasSchema);
-
-export default Turmas;
+module.exports = mongoose.model('Turmas', turmasSchema);

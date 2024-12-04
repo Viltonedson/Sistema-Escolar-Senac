@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-const turmasDisciplinas = new mongoose.Schema({
+const turmasDisciplinasSchema = new mongoose.Schema({
     turma_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Turmas',
@@ -13,6 +13,4 @@ const turmasDisciplinas = new mongoose.Schema({
     }
 });
 
-const TurmasDisciplinas = mongoose.model('TurmasDisciplinas', turmasDisciplinas);
-
-export default TurmasDisciplinas;
+module.exports = mongoose.model('TurmasDisciplinas', turmasDisciplinasSchema);

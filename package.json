@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Sistema de Cadastro de Alunos e Professores Senac",
   "main": "app.js",
-  "type": "module",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",

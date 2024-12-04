@@ -1,62 +1,64 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const API_URL = 'http://192.168.1.7:3000'; // Altere para o IP da sua máquina
+import axios from 'axios';
 
 export default function ConceitosScreen() {
   const [conceitos, setConceitos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [refreshing, setRefreshing] = useState(false);
 
-  const carregarConceitos = async () => {
+  useEffect(() => {
+    fetchConceitos();
+  }, []);
+
+  const fetchConceitos = async () => {
     try {
-      const userData = JSON.parse(await AsyncStorage.getItem('userData'));
-      const token = await AsyncStorage.getItem('userToken');
-
-      if (!userData || !token) {
-        setError('Dados do usuário não encontrados');
+      // Buscar dados do usuário do AsyncStorage
+      const userData = await AsyncStorage.getItem('userData');
+      if (!userData) {
+        setError('Usuário não encontrado. Por favor, faça login novamente.');
         setLoading(false);
         return;
       }
 
-      const response = await fetch(`${API_URL}/alunos/${userData.id}/conceitos`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const parsedUserData = JSON.parse(userData);
+      const alunoId = parsedUserData._id || parsedUserData.id;
 
-      if (!response.ok) {
-        throw new Error('Erro ao carregar conceitos');
+      if (!alunoId) {
+        setError('ID do aluno não encontrado. Por favor, faça login novamente.');
+        setLoading(false);
+        return;
       }
 
-      const data = await response.json();
-      setConceitos(data);
-      setError(null);
+      // Buscar conceitos do aluno
+      const response = await axios.get(`http://localhost:3000/alunos/${alunoId}/conceitos`);
+      setConceitos(response.data);
     } catch (err) {
-      console.error(err);
-      setError('Erro ao carregar conceitos. Tente novamente.');
+      console.error('Erro ao buscar conceitos:', err);
+      setError('Erro ao carregar conceitos. Tente novamente mais tarde.');
     } finally {
       setLoading(false);
-      setRefreshing(false);
     }
   };
 
-  useEffect(() => {
-    carregarConceitos();
-  }, []);
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    carregarConceitos();
-  }, []);
+  const getStatusColor = (conceito) => {
+    switch (conceito) {
+      case 'Desenvolvido':
+        return '#4CAF50';
+      case 'Em Desenvolvimento':
+        return '#FFC107';
+      case 'Não Desenvolvido':
+        return '#F44336';
+      default:
+        return '#757575';
+    }
+  };
 
   if (loading) {
     return (
-      <LinearGradient colors={['#DF2F80', '#4467B0']} style={styles.container}>
+      <LinearGradient colors={['#DF2F80', '#4467B0']} style={[styles.container, styles.centerContent]}>
         <ActivityIndicator size="large" color="#FFF" />
       </LinearGradient>
     );
@@ -64,7 +66,7 @@ export default function ConceitosScreen() {
 
   if (error) {
     return (
-      <LinearGradient colors={['#DF2F80', '#4467B0']} style={styles.container}>
+      <LinearGradient colors={['#DF2F80', '#4467B0']} style={[styles.container, styles.centerContent]}>
         <Text style={styles.errorText}>{error}</Text>
       </LinearGradient>
     );
@@ -72,29 +74,31 @@ export default function ConceitosScreen() {
 
   return (
     <LinearGradient colors={['#DF2F80', '#4467B0']} style={styles.container}>
-      <ScrollView 
-        contentContainerStyle={styles.scrollContainer}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        <Text style={styles.title}>Conceitos</Text>
-        {conceitos.length === 0 ? (
-          <View style={styles.card}>
-            <Text style={styles.noDataText}>Nenhum conceito encontrado</Text>
-          </View>
-        ) : (
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.title}>Meus Conceitos</Text>
+        
+        {conceitos.length > 0 ? (
           conceitos.map((item, index) => (
             <View key={index} style={styles.card}>
-              <Text style={styles.cardTitle}>{item.disciplina.nome}</Text>
-              <Text style={styles.cardContent}>
-                Conceito: <Text style={styles.conceito}>{item.conceito}</Text>
+              <Text style={styles.cardTitle}>
+                {item.disciplina?.nome || 'Disciplina não encontrada'}
               </Text>
-              <Text style={styles.cardContent}>
-                Situação Acadêmica: {item.conceito !== 'Não avaliado' ? 'Avaliado' : 'Pendente'}
-              </Text>
+              <View style={styles.conceptContainer}>
+                <Text style={[
+                  styles.cardContent,
+                  { color: getStatusColor(item.conceito) }
+                ]}>
+                  {item.conceito}
+                </Text>
+              </View>
             </View>
           ))
+        ) : (
+          <View style={styles.card}>
+            <Text style={styles.cardContent}>
+              Nenhum conceito registrado ainda
+            </Text>
+          </View>
         )}
       </ScrollView>
     </LinearGradient>
@@ -105,6 +109,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+  },
+  centerContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   scrollContainer: {
     flexGrow: 1,
@@ -134,22 +142,20 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   cardContent: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 5,
+    fontSize: 18,
+    fontWeight: '600',
+    textAlign: 'center',
   },
-  conceito: {
-    fontWeight: 'bold',
-    color: '#000',
+  conceptContainer: {
+    backgroundColor: '#f5f5f5',
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 5,
   },
   errorText: {
     color: '#fff',
     fontSize: 16,
     textAlign: 'center',
+    padding: 20,
   },
-  noDataText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-  }
 });

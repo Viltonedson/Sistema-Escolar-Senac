@@ -1,18 +1,27 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-const comunicadosSchema = new mongoose.Schema({
-    titulo: { type: String, required: true },
-    conteudo: { type: String, required: true },
+const comunicadoSchema = new mongoose.Schema({
+    titulo: {
+        type: String,
+        required: true
+    },
+    conteudo: {
+        type: String,
+        required: true
+    },
     autor_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-    data_criacao: { type: Date, default: Date.now },
-    destinatarios: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Usuarios' }], 
-    status: { type: String, enum: ['ativo', 'arquivado', 'deletado'], default: 'ativo' }
+    destinatarios: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    data: {
+        type: Date,
+        default: Date.now
+    }
 });
 
-const Comunicado = mongoose.model('Comunicados', comunicadosSchema);
-
-export default Comunicado;
+module.exports = mongoose.model('Comunicado', comunicadoSchema);

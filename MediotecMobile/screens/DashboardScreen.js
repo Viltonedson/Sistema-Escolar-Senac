@@ -1,27 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { LinearGradient } from 'expo-linear-gradient';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function DashboardScreen({ navigation }) {
-  const [userName, setUserName] = useState('');
-
-  useEffect(() => {
-    const carregarDadosUsuario = async () => {
-      try {
-        const userData = await AsyncStorage.getItem('userData');
-        if (userData) {
-          const { name } = JSON.parse(userData);
-          setUserName(name);
-        }
-      } catch (error) {
-        console.error('Erro ao carregar dados do usuário:', error);
-      }
-    };
-
-    carregarDadosUsuario();
-  }, []);
+export default function HomeScreen({ navigation, route }) {
+  // Obtém os dados do usuário da rota
+  const userData = route.params?.userData;
 
   return (
     <LinearGradient colors={['#DF2F80', '#4467B0']} style={styles.container}>
@@ -34,11 +18,11 @@ export default function DashboardScreen({ navigation }) {
       <View style={styles.iconContainer}>
         <Icon name="user-circle" size={70} color="#FFF" />
       </View>
-      <Text style={styles.title}>Olá, {userName}</Text>
+      <Text style={styles.title}>Olá, {userData?.name || 'Usuário'}</Text>
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Informações Acadêmicas')}
+        onPress={() => navigation.navigate('Informações Acadêmicas', { userData: userData })}
       >
         <Text style={styles.buttonText}>Informações Acadêmicas</Text>
       </TouchableOpacity>

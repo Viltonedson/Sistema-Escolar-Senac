@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const conceitoSchema = new mongoose.Schema({
     aluno: {
@@ -8,15 +8,14 @@ const conceitoSchema = new mongoose.Schema({
     },
     disciplina: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Disciplina',
+        ref: 'Disciplinas',
         required: true
     },
     conceito: {
         type: String,
         required: true,
-        enum: ['Ruim', 'Regular', 'Bom', 'Ótimo', 'Excelente']
+        enum: ['Desenvolvido', 'Em Desenvolvimento', 'Não Desenvolvido']
     }
 });
 
-const Conceito = mongoose.model('Conceito', conceitoSchema);
-export default Conceito;
+module.exports = mongoose.model('Conceito', conceitoSchema);

@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-const AlunosTurmasSchema = new mongoose.Schema({
+const alunosTurmasSchema = new mongoose.Schema({
     aluno_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -15,5 +15,4 @@ const AlunosTurmasSchema = new mongoose.Schema({
     timestamps: true
 });
 
-const AlunosTurmas = mongoose.model('AlunosTurmas', AlunosTurmasSchema);
-export default AlunosTurmas;
+module.exports = mongoose.model('AlunosTurmas', alunosTurmasSchema);

@@ -15,11 +15,10 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_CONFIG } from '../config';
 
-// URL base da API
-const API_URL = API_CONFIG.getApiUrl();
+const API_URL = 'http://localhost:3000';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -28,52 +27,41 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = async () => {
     if (!email || !senha) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos');
+      Alert.alert('Erro', 'Por favor, insira e-mail e senha.');
       return;
     }
 
     setLoading(true);
-    
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 segundos de timeout
-
-      console.log('Tentando conectar à:', `${API_URL}/auth/login/mobile`);
-      
-      const response = await fetch(`${API_URL}/auth/login/mobile`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({ email, senha }),
-        signal: controller.signal,
+      const response = await axios.post(`${API_URL}/auth/login/mobile`, {
+        email: email,
+        password: senha
       });
 
-      clearTimeout(timeoutId);
+      const { user, token } = response.data;
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Resposta da API:', errorText);
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!user) {
+        Alert.alert('Erro', 'Usuário não encontrado');
+        return;
       }
 
-      const data = await response.json();
+      // Salvar dados do usuário no AsyncStorage com o _id correto
+      const userData = {
+        _id: user.id, // Convertendo id para _id
+        name: user.name,
+        email: user.email,
+        token: token
+      };
       
-      await AsyncStorage.setItem('userToken', data.token);
-      await AsyncStorage.setItem('userData', JSON.stringify(data.user));
-      
-      navigation.replace('Dashboard');
+      await AsyncStorage.setItem('userData', JSON.stringify(userData));
+
+      // Navegar para o Dashboard passando os dados do usuário
+      navigation.navigate('Dashboard', { userData });
     } catch (error) {
-      console.error('Erro completo:', error);
-      let message = 'Erro ao fazer login';
-      
-      if (error.name === 'AbortError') {
-        message = 'Tempo de conexão esgotado. Verifique sua internet.';
-      } else if (error.message.includes('Network request failed')) {
-        message = 'Erro de conexão. Verifique sua internet ou se o servidor está online.';
+      let message = 'Erro ao fazer login. Tente novamente.';
+      if (error.response) {
+        message = error.response.data.msg || message;
       }
-      
       Alert.alert('Erro', message);
     } finally {
       setLoading(false);
@@ -83,10 +71,10 @@ export default function LoginScreen({ navigation }) {
   return (
     <LinearGradient colors={['#DF2F80', '#4467B0']} style={styles.container}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior="padding"
         style={{ flex: 1 }}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
           <ScrollView
             contentContainerStyle={styles.scrollContainer}
             keyboardShouldPersistTaps="handled"
@@ -102,29 +90,31 @@ export default function LoginScreen({ navigation }) {
               <TextInput
                 style={styles.input}
                 placeholder="E-mail"
-                placeholderTextColor="#999"
-                keyboardType="email-address"
-                autoCapitalize="none"
+                placeholderTextColor="#FFF"
                 value={email}
                 onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
               />
               <TextInput
                 style={styles.input}
                 placeholder="Senha"
-                placeholderTextColor="#999"
-                secureTextEntry
+                placeholderTextColor="#FFF"
                 value={senha}
                 onChangeText={setSenha}
+                secureTextEntry
               />
-              <TouchableOpacity
-                style={[styles.button, loading && styles.buttonDisabled]}
-                onPress={handleLogin}
-                disabled={loading}
-              >
-                <Text style={styles.buttonText}>
-                  {loading ? 'Carregando...' : 'Entrar'}
-                </Text>
-              </TouchableOpacity>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity 
+                  style={[styles.loginButton, loading && styles.loginButtonDisabled]} 
+                  onPress={handleLogin}
+                  disabled={loading}
+                >
+                  <Text style={styles.loginButtonText}>
+                    {loading ? 'Entrando...' : 'Entrar'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </ScrollView>
         </TouchableWithoutFeedback>
@@ -179,7 +169,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 5,
   },
-  button: {
+  buttonContainer: {
+    width: '100%',
+    marginTop: 15,
+    alignItems: 'center',
+  },
+  loginButton: {
     backgroundColor: '#fff',
     borderRadius: 5,
     paddingHorizontal: 15,
@@ -194,10 +189,10 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-  buttonDisabled: {
-    opacity: 0.7,
+  loginButtonDisabled: {
+    opacity: 0.5,
   },
-  buttonText: {
+  loginButtonText: {
     color: '#4467B0',
     fontSize: 18,
     fontWeight: 'bold',
