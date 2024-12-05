@@ -11,7 +11,7 @@ const Turmas = require('./models/Turmas.js');
 const Disciplinas = require('./models/Disciplinas.js');
 const ProfessorDisciplinas = require('./models/ProfessorDisciplinas.js');
 const TurmasDisciplinas = require('./models/TurmasDisciplinas.js');
-const AlunosTurmas = require(__dirname + '/models/AlunosTurmas.js');
+const AlunosTurmas = require('.AlunosTurmas.js');
 const Conceito = require('./models/Conceito.js');
 const Comunicado = require('./models/Comunicado.js');
 
