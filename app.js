@@ -18,28 +18,17 @@ const Comunicado = require('./models/Comunicado.js');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Configuração do CORS
-app.use(cors({
-  origin: ['http://localhost:8081', 'http://localhost:19006', 'http://localhost:19000'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-  credentials: true
-}));
+// Configuração básica do CORS
+app.use(cors());
 
 // Middleware para JSON
 app.use(express.json());
 
-// Configuração JSON
-app.use(cors());
-
-// Configuração do CORS
+// Middleware para CORS personalizado
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    if (req.method === 'OPTIONS') {
-        return res.sendStatus(200);
-    }
+    res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5501');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
     next();
 });
 
@@ -569,9 +558,9 @@ mongoose
 .catch((err) => console.log(err))
 
 // Configurar CORS para permitir requisições de qualquer origem
-app.use(cors({
-    origin: '*',  // Permitir todas as origens
-}));
+// app.use(cors({
+//     origin: '*',  // Permitir todas as origens
+// }));
 
 // Buscar conceitos de um aluno
 app.get('/alunos/:alunoId/conceitos', async (req, res) => {

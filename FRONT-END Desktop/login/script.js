@@ -18,23 +18,26 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(loginData) // Enviar os dados como JSON
+            body: JSON.stringify(loginData)
         });
 
-   
         const data = await response.json();
 
         if (response.ok) {
-            window.location.href = '../painel/painel.html';
-            alert(data.msg); // Mensagem de sucesso
+            // Salvar token e dados do usuário
+            if (data.token) {
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('userId', data.id);
+                localStorage.setItem('userEmail', email);
+            }
             
+            // Redirecionar para o painel
+            window.location.href = '../painel/painel.html';
         } else {
-            // Exibir mensagem de erro
-            alert(data.msg); 
+            throw new Error(data.msg || 'Erro ao fazer login');
         }
     } catch (error) {
-        
         console.error('Erro:', error);
-        alert('Ocorreu um erro ao tentar fazer login. Por favor, tente novamente.');
+        alert(error.message || 'Ocorreu um erro ao tentar fazer login. Por favor, tente novamente.');
     }
 });
