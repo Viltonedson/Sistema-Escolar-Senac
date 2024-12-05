@@ -33,7 +33,7 @@ export default function ConceitosScreen() {
       }
 
       // Buscar conceitos do aluno
-      const response = await axios.get(`http://localhost:3000/alunos/${alunoId}/conceitos`);
+      const response = await axios.get(`https://sistema-escolar-senac.onrender.com/alunos/${alunoId}/conceitos`);
       setConceitos(response.data);
     } catch (err) {
       console.error('Erro ao buscar conceitos:', err);

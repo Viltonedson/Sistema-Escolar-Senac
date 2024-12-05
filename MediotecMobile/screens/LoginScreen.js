@@ -18,7 +18,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://mediotec-api.onrender.com';  // Using the public API URL
+const API_URL = 'https://sistema-escolar-senac.onrender.com';  // Using the public API URL
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
