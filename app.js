@@ -508,7 +508,7 @@ app.post('/turmas/:turma_id/disciplinas', async (req, res) => {
     }
 });
 
-app.post('/alunosturmas', async (req, res) => {
+app.post('/AlunosTurmas', async (req, res) => {
     try {
         const { aluno_id, turma_id } = req.body;
 
