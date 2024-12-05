@@ -102,7 +102,7 @@ app.post('/auth/register', async (req, res) => {
     }
 
     if(!password){
-        return res.status(422).json({msg : 'A senha é obrigatória!'})
+        return res.status(422).json({msg : 'A senha  obrigatória!'})
     }
 
     if(!confirmpassword){
